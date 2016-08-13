@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers'])
+var app = angular.module('main', ['ionic', 'main.controllers'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -49,25 +49,119 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
-    .state('app.playlists', {
-      url: '/playlists',
+    .state('app.topics', {
+      url: '/topics',
       views: {
         'menuContent': {
-          templateUrl: 'templates/playlists.html',
-          controller: 'PlaylistsCtrl'
+          templateUrl: 'templates/topics.html',
+          controller: 'TopicsCtrl'
         }
       }
     })
 
-  .state('app.single', {
-    url: '/playlists/:playlistId',
+  .state('app.topic', {
+    url: '/topics/:topic_id',
     views: {
       'menuContent': {
-        templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
+        templateUrl: 'templates/topic.html',
+        controller: 'TopicCtrl'
       }
     }
   });
+
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('app/topics');
+
+
+});
+
+
+var DEVELOPING = true,
+    BASE_URL = "http://localhost:8100", //"http://192.168.42.64:8080", //"http://localhost:8080",
+    BASE_API_URL = "https://lnchlist.firebaseio.com";
+
+    if( !DEVELOPING )
+    BASE_URL = "https://lnchlist.appspot.com";
+
+
+/**
+ * Start the app
+ */
+app.run( function() {
+    // TODO: add loading screen
+
+} );
+
+
+app.service( "firebaseDbService", function() {
+
+    return ( {
+
+        getTopic: function() { }
+
+    } );
+
+} );
+
+
+/**
+ * The ajaxService handles all the server calls.
+ * @param  {Object} $http   namesapce that allows access to Angular's ajax api
+ * @return {Object}         a collection of functions that make unique calls to the server
+ */
+app.service( "ajaxService", function( $http, $location ) {
+
+    return ({
+
+        request : function( method, url, data, onSuccess, onFail ) {
+
+            if( onSuccess == null )
+                onSuccess = handleAJAXSuccess;
+
+            if( onFail == null )
+                onFail = handleAJAXFail;
+
+            var request = $http({
+                method: method,
+                url: url,
+                data: data,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            });
+
+            return request.then( onSuccess, onFail );
+
+        },
+
+        // TODO: add arg to change number topics requested, default is 9
+        getTopics : function( onSuccess, onFail ) {
+
+            return this.request(
+                "GET",
+                BASE_API_URL + "/topics",
+                "",
+                onSuccess,
+                onFail
+            )
+
+        },
+
+        getTopic: function( topic_key, onSuccess, onFail ) {
+
+            var action = BASE_API_URL + "/topic/" + topic_key;
+
+            // update browser url to topic
+            $location.path( action );
+
+            return this.request(
+                "GET",
+                action,
+                "",
+                onSuccess,
+                onFail
+            );
+
+        }
+
+    })
+
 });

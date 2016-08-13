@@ -1,4 +1,21 @@
-angular.module('starter.controllers', [])
+function Topic( name, description, icon ) {
+    this.name = name;
+
+    if( description == undefined )
+        description = "no description";
+    this.description = description;
+
+    if( icon == undefined )
+        icon = "../img/ionic.png";
+    this.icon = icon;
+
+    this.launchlists = [];
+}
+
+
+
+
+angular.module('main.controllers', [])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
@@ -41,16 +58,33 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope) {
-  $scope.playlists = [
-    { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
-  ];
+
+.controller('TopicsCtrl', function($scope, ajaxService) {
+    var music = new Topic( "music" ),
+        design = new Topic( "design" ),
+        random = new Topic( "random" );
+
+    // console.log( music, design, random );
+
+    $scope.topics = [
+        // music, design, random
+    ];
+
+    var topicsListner = firebase.database().ref( "/topics" )
+
+    topicsListner.on( "value",
+        function( snapshot ) {
+
+            console.log( snapshot.val() );
+            $scope.topics = snapshot.val()
+
+         } );
+
+
+    // ajaxService.getTopics();
+
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+
+.controller('TopicCtrl', function($scope, $stateParams) {
 });
