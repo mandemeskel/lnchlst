@@ -17,7 +17,34 @@ function Topic( name, description, icon ) {
 
 angular.module('main.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, databaseService) {
+
+  var music = new Topic( "music" ),
+      design = new Topic( "design" ),
+      random = new Topic( "random" );
+
+  // console.log( music, design, random );
+
+  // dct of topics being displayed on the home page
+  $scope.topics = {
+      // music, design, random
+  };
+
+  // the current topic being dispalyed to the user
+  $scope.topic = {};
+
+
+  // loads a topic into $scope.topic
+  $scope.loadTopic = function( topic_name ) {
+    if( DEVELOPING )
+      console.log( "loadTopic", topic_name );
+
+    $scope.topic = databaseService.getTopicByName( $scope,topic_name );
+
+  };
+
+  // init listners to firebase database
+  databaseService.init( $scope )
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -59,32 +86,22 @@ angular.module('main.controllers', [])
 })
 
 
-.controller('TopicsCtrl', function($scope, ajaxService) {
-    var music = new Topic( "music" ),
-        design = new Topic( "design" ),
-        random = new Topic( "random" );
-
-    // console.log( music, design, random );
-
-    $scope.topics = [
-        // music, design, random
-    ];
-
-    var topicsListner = firebase.database().ref( "/topics" )
-
-    topicsListner.on( "value",
-        function( snapshot ) {
-
-            console.log( snapshot.val() );
-            $scope.topics = snapshot.val()
-
-         } );
+.controller('TopicsCtrl', function($scope, databaseService) {
 
 
-    // ajaxService.getTopics();
 
 })
 
 
-.controller('TopicCtrl', function($scope, $stateParams) {
+.controller('TopicCtrl', function($scope, $stateParams, databaseService) {
+  if( DEVELOPING )
+    console.log( $stateParams );
+
+})
+
+
+.controller('HomeCtrl', function($scope, databaseService) { 
+
+
+
 });

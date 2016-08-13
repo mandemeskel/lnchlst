@@ -25,11 +25,26 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
-    .state('app', {
-    url: '/app',
+  .state('app', {
+    url: '',
     abstract: true,
     templateUrl: 'templates/menu.html',
     controller: 'AppCtrl'
+    // views: {
+    //   'menuContent': {
+    //     templateUrl: 'templates/search.html'
+    //   }
+    // }
+  })
+
+  .state('app.home', {
+    url: '/',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/home.html',
+        controller: 'HomeCtrl'
+      }
+    }
   })
 
   .state('app.search', {
@@ -49,18 +64,19 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
         }
       }
     })
-    .state('app.topics', {
-      url: '/topics',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/topics.html',
-          controller: 'TopicsCtrl'
-        }
+
+  .state('app.topics', {
+    url: '/topics',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/topics.html',
+        controller: 'TopicsCtrl'
       }
-    })
+    }
+  })
 
   .state('app.topic', {
-    url: '/topics/:topic_id',
+    url: '/topics/:topic_name',
     views: {
       'menuContent': {
         templateUrl: 'templates/topic.html',
@@ -70,7 +86,7 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('app/topics');
+  $urlRouterProvider.otherwise( '/' );
 
 
 });
@@ -89,17 +105,96 @@ var DEVELOPING = true,
  */
 app.run( function() {
     // TODO: add loading screen
+} );
+
+
+/**
+ * Handles all firebase database logic
+ * @param  {None} 
+ * @return {Object} object with methods to access db
+ */
+app.service( "databaseService", function() {
+
+  return ( {
+
+    init: function( $scope ) {
+      // whenever the firebase value is updated call this
+      // function
+      var topicsListner = function( snapshot ) {
+        if( DEVELOPING )
+          console.log( snapshot.val() );
+        $scope.topics = snapshot.val();
+      }
+
+      // set a listner for any value updates for "topic"
+      this.setTopicsListner( topicsListner, "value" );
+
+    },
+
+    getTopics: function() { 
+      var topics,
+          listner = function( snapshot ) {
+            if( DEVELOPING )
+              console.log( snapshot.val() );
+            topics = snapshot.val();
+          }
+
+      // get ALL topics from firebase db
+      var topics = firebase.database().ref( "/topics" );
+
+      // read the data once, don't bind this listener to topics
+      topics.once( "value", listner );
+
+      return topics;
+    },
+
+    getTopicByName: function( $scope, topic_name ) {
+      if( DEVELOPING )
+        console.log( "getTopicByName", topic_name );
+
+      if( $scope.topics == undefined )
+        $scope.topics = this.getTopics();
+
+      return $scope.topics[ topic_name ];
+
+    },
+
+    setTopicsListner: function( listner, db_event ) { 
+      // var topics;
+
+      if( listner == undefined )
+        listner = function( snapshot ) {
+          // if( DEVELOPING )
+          //   console.log( snapshot.val() );
+          topics = snapshot.val();
+        }
+
+      if( db_event == undefined )
+        db_event = "value"
+
+      // get topics from firebase db
+      var topics = firebase.database().ref( "/topics" );
+
+      // whenever the firebase value is updated call this
+      // function
+      topics.on( db_event, listner );
+    }
+
+  } );
 
 } );
 
 
-app.service( "firebaseDbService", function() {
-
-    return ( {
-
-        getTopic: function() { }
-
-    } );
+/**
+ * Capitalizes first letter of word passed by angular expression
+ * @param  {None}
+ * @return {String}   the capitalized string
+ */
+app.filter( "capitalize", function() {
+  return function( input ) {
+    if( input == undefined ) return "";
+    return input.charAt(0).toUpperCase() + input.substr(1).toLowerCase();
+  }
 
 } );
 
