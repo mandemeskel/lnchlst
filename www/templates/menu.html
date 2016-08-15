@@ -20,28 +20,44 @@
   </ion-side-menu-content>
 
 
-  <ion-side-menu side="left">
+<!--   <ion-side-menu side="left" expose-aside-when="large">
+ -->
+  <ion-side-menu side="left" expose-aside-when="large">
 
     <ion-header-bar class="bar-stable">
+
       <h1 class="title">Menu</h1>
+
+      <div class="buttons">
+
+        <a ng-hide="tab == 'home'" class="button ion-home" ng-click="changeTab('home')" href="#/home"></a>
+        <a ng-hide="user.logged_in" class="button ion-person" ng-click="login()"></a>
+        <a ng-show="user.logged_in" class="button ion-power" ng-click="logout()"></a>
+
+      </div>
+
     </ion-header-bar>
+
 
     <ion-content>
 
       <ion-list>
-        <ion-item menu-close ng-click="login()">
+<!--         <ion-item menu-close ng-click="login()">
           Login
         </ion-item>
         <ion-item menu-close href="#/home">
           Home
+        </ion-item> -->
+        <ion-item ng-hide="tab == 'user' || !user.logged_in" menu-close ng-click="changeTab('user')" href="#/user">
+          My Acount
         </ion-item>
-        <ion-item menu-close href="#/search">
+        <ion-item menu-close ng-click="changeTab('search')" href="#/search">
           Search
         </ion-item>
-        <ion-item menu-close href="#/browse">
+        <ion-item menu-close ng-click="changeTab('browse')" href="#/browse">
           Browse
         </ion-item>
-        <ion-item menu-close href="#/topics">
+        <ion-item menu-close ng-click="changeTab('topics')" href="#/topics">
           Topics
         </ion-item>
       </ion-list>

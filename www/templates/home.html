@@ -1,14 +1,28 @@
 <ion-view view-title="Home">
-  <ion-content>
-    <ion-list>
 
-      <ion-item ng-click="loadTopic(topic.name)" ng-repeat="topic in topics" href="#/topics/{{topic.name}}">
+	<!-- TODO: this include is not working -->
+	<!-- <div ng-include="templates/nav-bar.html"></div> -->
 
-        <h3> {{topic.name}} </h3>
-        <p> {{topic.description}} </p>
+	<ion-nav-bar class="bar-balanced">
 
-      </ion-item>
+		<ion-nav-back-button> </ion-nav-back-button> 
 
-    </ion-list>
-  </ion-content>
+		<ion-nav-buttons side="left"> 
+			<button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button> 
+		</ion-nav-buttons>
+		
+	</ion-nav-bar>
+
+	<ion-content>
+		<ion-list>
+
+			<ion-item ng-click="loadTopic(topic.name)" ng-repeat="topic in topics" href="#/topics/{{topic.name}}">
+
+				<h3> {{topic.name}} </h3>
+				<p> {{topic.description}} </p>
+
+			</ion-item>
+
+		</ion-list>
+	</ion-content>
 </ion-view>

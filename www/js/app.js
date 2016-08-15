@@ -83,6 +83,26 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
         controller: 'TopicCtrl'
       }
     }
+  })
+
+  .state('app.launchlists', {
+    url: '/launchlists/:launchlist_name',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/launchlists.html',
+        controller: 'LaunchlistsCtrl'
+      }
+    }
+  })
+
+  .state('app.user', {
+    url: '/user',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/user.html',
+        controller: 'UserCtrl'
+      }
+    }
   });
 
   // if none of the above states are matched, use this as the fallback
@@ -117,17 +137,152 @@ app.service( "databaseService", function() {
 
   return ( {
 
+    addResource: function( uid, resource, success, error ) {
+      // add resource to database
+      var resources = firebase.database().ref( "/resources/" );
+      var new_resource = resources.push();
+
+      if( success == undefined ) {
+        success = function() {
+          console.log( "databaseService.addResource", true );
+        }
+      }
+
+      if( error == undefined ) {
+        error = function( error ) {
+          console.error( "databaseService.addResource", error );
+        }
+      }
+
+      new_resource.set( resource ).then( function() {
+          console.log( "databaseService.addResource", true );
+        }, error );
+
+      // add resource id to user resources list
+      var user_resources = firebase.database().ref( 
+        "users/" + uid + "/resources/" + new_resource.name() );
+      user_resources.set().then( success, error )
+
+    },
+
     init: function( $scope ) {
       // whenever the firebase value is updated call this
       // function
       var topicsListner = function( snapshot ) {
         if( DEVELOPING )
           console.log( snapshot.val() );
+
+        // TODO: use Topic object
         $scope.topics = snapshot.val();
+        
+        // for( let key in $scope.topics ) {
+        //   let topic = $scope.topics[ key ];
+          
+        //   if( topic.launchlists == [] ) continue;
+        //   topic.launchlists_objects = [];
+
+        //   for( let launchlist_id in topic.launchlists )
+        //     topic.launchlists_objects.push(
+        //       this.getLaunchlistById( launchlist_id )
+        //     );
+        // }
+
       }
 
       // set a listner for any value updates for "topic"
       this.setTopicsListner( topicsListner, "value" );
+
+    },
+
+    get: function( ref_url, apromise, on_error ) {
+      if( DEVELOPING )
+        console.log( "databaseService.get", ref_url, apromise );
+
+      if( ref_url == "" || apromise == undefined ) return [];
+
+      var response = firebase.database().ref( ref_url );
+
+      if( on_error == undefined ) {
+        on_error = function( error ) {
+          console.error( error );
+        }
+      }
+
+      if( response == undefined ) {
+        if( DEVELOPING )
+          console.log( "databaseService.getValueAtRef", "nothing found at " + ref_url );
+        return [];
+      }
+
+      response.once( "value" ).then( apromise, on_error );
+
+    },
+
+    getLaunchlistById: function( launchlist_id, apromise ) {
+      if( DEVELOPING )
+        console.log( "databaseService.getLaunchlistById", launchlist_id );
+
+      if( apromise == undefined ) {
+        var launchlists = this.getValueAtRef( "/launchlists/" + launchlist_id )
+
+        if( launchlists == [] ) return undefined;
+
+        // getValueAtRef returns an array by default
+        return launchlists[0];
+      }
+
+      this.getValueAtRef( "/launchlists/" + launchlist_id, apromise );
+
+    },
+
+    getLaunchlistsById: function( launchlist_ids ) {
+      if( DEVELOPING )
+        console.log( "databaseService.getLaunchlistsById", launchlist_ids );
+
+      launchlists = [];
+      for( var id in launchlist_ids ) {
+
+        launchlist = this.getLaunchlistById( id );
+        if( launchlist == undefined )
+          continue;
+
+        launchlists.push( launchlist );
+
+      }
+
+      console.log( "databaseService.getLaunchlistsById", launchlists );
+      return launchlists;
+
+    },
+
+    // TODO: make this function private
+    getValueAtRef: function( ref_url, apromise ) {
+      if( DEVELOPING )
+        console.log( "databaseService.getValueAtRef", ref_url );
+
+      if( ref_url == "" ) return [];
+
+      var response = firebase.database().ref( ref_url );
+
+      if( response == undefined ) {
+        if( DEVELOPING )
+          console.log( "databaseService.getValueAtRef", "nothing found at " + ref_url );
+        return [];
+      }
+
+      if( apromise == undefined ) {
+
+        var models = []
+        response.once( "value", function( snapshot ) { 
+          if( DEVELOPING )
+            console.log( "databaseService.getValueAtRef", snapshot.val() );
+          models.push( snapshot.val() );
+        } );
+
+        return models;
+      }
+
+      response.once( "value" ).then( apromise );
 
     },
 
@@ -156,6 +311,29 @@ app.service( "databaseService", function() {
         $scope.topics = this.getTopics();
 
       return $scope.topics[ topic_name ];
+
+    },
+
+    put: function( ref_url, data, apromise, on_error ) {
+      if( ref_url == "" ) {
+        if( DEVELOPING ) 
+          console.log( "databaseService.put", "ref_url is empty" );
+        return "";
+      }
+
+      if( apromise == undefined ) {
+        apromise = function( snapshot ) {
+          console.log( "databaseService.put", snapshot.val() );
+        }
+      }
+
+      if( on_error == undefined ) {
+        on_error = function( error ) {
+          console.error( "databaseService.put", error );
+        }
+      }
+
+      firebase.database().ref( ref_url ).set( data ).then( apromise, on_error );
 
     },
 
