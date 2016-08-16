@@ -60,7 +60,7 @@ angular.module('main.controllers', [])
       console.log( "loadLaunchlistList", launchlist );
 
     $scope.launchlist = launchlist;
-    $scope.launchlist.list_objects = [] 
+    $scope.launchlist.list_objects = []
     for( let n in $scope.launchlist.list ) {
       let item = $scope.launchlist.list[ n ];
       // console.log( item );
@@ -69,25 +69,25 @@ angular.module('main.controllers', [])
       // they come with the launchlist.list
       if( item.type == "heading" ) {
 
-        $scope.launchlist.list_objects.push( 
-          { type: item.type, item: item, order: item.index } 
+        $scope.launchlist.list_objects.push(
+          { type: item.type, item: item, order: item.index }
         );
         continue;
 
       }
 
-      let ref_url, 
+      let ref_url,
       // the function that will be excuted when the databse
       // returns a succesfull result
           apromise = function( snapshot ) {
-            var obj = { 
-              type: item.type, 
-              item: snapshot.val(), 
-              order: item.index 
+            var obj = {
+              type: item.type,
+              item: snapshot.val(),
+              order: item.index
             };
 
             if( DEVELOPING ) console.log( obj );
-            
+
             $scope.launchlist.list_objects.push( obj );
           };
 
@@ -124,6 +124,21 @@ angular.module('main.controllers', [])
 
   };
 
+  var show = function() {
+    $ionicLoading.show({
+      template: 'Loading...'
+    }).then(function(){
+       console.log("The loading indicator is now displayed");
+    });
+  };
+
+  var hide = function(){
+    $ionicLoading.hide().then(function(){
+       console.log("The loading indicator is now hidden");
+    });
+  };
+
+  show();
 
   // init listners to firebase database
   // databaseService.init( $scope )
@@ -136,18 +151,20 @@ angular.module('main.controllers', [])
 
     for( let key in $scope.topics ) {
       let topic = $scope.topics[ key ];
-      
+
       if( topic.launchlists == [] ) continue;
       topic.launchlists_objects = [];
 
       for( let launchlist_id in topic.launchlists )
-        databaseService.getLaunchlistById( 
+        databaseService.getLaunchlistById(
           launchlist_id, function( snapshot ) {
             topic.launchlists_objects.push( snapshot.val() );
           }
         )
-  
+
     }
+
+    hide();
 
   }
 
@@ -180,10 +197,10 @@ angular.module('main.controllers', [])
 
     // Initialize the FirebaseUI Widget using Firebase.
     var ui = new firebaseui.auth.AuthUI(firebase.auth());
-    
+
     // The start method will wait until the DOM is loaded.
     ui.start('#firebaseui-auth-container', uiConfig);
-    
+
   };
 
   // logout
@@ -228,7 +245,7 @@ angular.module('main.controllers', [])
 
             if( snapshot.val() == null ) {
 
-              databaseService.put( 
+              databaseService.put(
                 "/users/" + $scope.user.uid,
                 {
                   name: $scope.user.displayName,
@@ -247,7 +264,7 @@ angular.module('main.controllers', [])
               $scope.user.resources = [];
               let resources = $scope.user.user.resources;
               for( let resource_id in resources ) {
-                databaseService.get( 
+                databaseService.get(
                   "/resources/" + resource_id,
                   function( snapshot ) {
                     $scope.user.resources.push( snapshot.val() );
@@ -269,7 +286,7 @@ angular.module('main.controllers', [])
                 console.log( "no user account", error );
             }
           );
-            
+
           } )
 
         } else if( $scope.user.logged_in ) {
@@ -351,7 +368,7 @@ angular.module('main.controllers', [])
 })
 
 
-.controller('HomeCtrl', function($scope, databaseService) { 
+.controller('HomeCtrl', function($scope, databaseService) {
   $scope.tab = "home";
 
 
@@ -359,7 +376,7 @@ angular.module('main.controllers', [])
 
 
 .controller('LaunchlistsCtrl', function($scope, databaseService) {
-  $scope.tab = "launchlists"; 
+  $scope.tab = "launchlists";
 
 
 
@@ -367,7 +384,7 @@ angular.module('main.controllers', [])
 
 
 .controller('UserCtrl', function($scope, databaseService) {
-  $scope.tab = "user"; 
+  $scope.tab = "user";
   $scope.resources_show_delete = false;
   $scope.add_resource = false;
   $scope.launchlist_show_delete = false;
@@ -382,7 +399,7 @@ angular.module('main.controllers', [])
       uid: $scope.user.uid
     };
 
-    databaseService.addResource( 
+    databaseService.addResource(
       $scope.user.uid,
       new_resource,
       function() {
@@ -402,7 +419,7 @@ angular.module('main.controllers', [])
   }
 
   $scope.toggleAddResource = function() {
-    $scope.add_resource = !$scope.add_resource; 
+    $scope.add_resource = !$scope.add_resource;
   }
 
   $scope.checkAddResource = function() {
@@ -410,7 +427,7 @@ angular.module('main.controllers', [])
   }
 
   $scope.toggleShowDelete = function() {
-    $scope.resources_show_delete = !$scope.resources_show_delete; 
+    $scope.resources_show_delete = !$scope.resources_show_delete;
   }
 
   $scope.checkShowDelete = function() {
