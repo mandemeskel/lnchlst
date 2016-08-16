@@ -17,27 +17,27 @@
 		<!-- resources -->
 		<div id="my_resources">
 
-
-			<ion-list show-delete="resourcesShowDelete" can-swipe="true">
+			<ion-list show-delete="checkShowDelete()" can-swipe="true">
 
 				<ion-item class="item-positive row item-header">
 
+<!-- TODO: Causes the list item to not recieve any input including this button, you can't toggle it off -->
 		      <div class="buttons col">
 		        <button class="button button-assertive button-icon icon ion-ios-minus-outline"
-		          ng-click="resourcesShowDelete = !resourcesShowDelete"></button>
+		          ng-click="toggleShowDelete()"></button>
 		      </div>
 
 					<h2 class="col-80 center">my resources</h2>
 
 		      <div class="buttons col">
-		        <button class="button button-balanced icon ion-plus-circled" ng-click="add_resource = !add_resource">
+		        <button class="button button-balanced button-icon icon ion-plus-circled" ng-click="toggleAddResource()">
 		        </button>
 		      </div>
 
 		    </ion-item>
 
 
-				<ion-item ng-show="add_resource">
+				<ion-item ng-show="checkAddResource()">
 					<form ng-submit="addResource()" class="add_resource">
 						<div class="list list-inset">
 						  <label class="item item-input">
@@ -63,15 +63,90 @@
 					<p> {{resource.description}} </p>
 
 					<ion-option-button class="button-positive"
-	                       ng-click="shareResource(item)">
+	                       ng-click="shareResource(resource)">
 			      Share
 			    </ion-option-button>
 			    <ion-option-button class="button-info"
-			                       ng-click="editResource(item)">
+			                       ng-click="editResource(resource)">
 			      Edit
+			    </ion-option-button>
+			    <ion-option-button class="button-assertive"
+			                       ng-click="editResource(resource)">
+			      Delete
 			    </ion-option-button>
 			    <ion-delete-button class="ion-minus-circled"
 			                       ng-click="deleteResource( $index )">
+			    </ion-delete-button>
+
+				</ion-item>
+
+			</ion-list>
+
+		</div>
+
+
+		<!-- resources -->
+		<div id="my_Launchlists">
+
+			<ion-list show-delete="checkShowLaunchlistDelete()" can-swipe="true">
+
+				<ion-item class="item-positive row item-header">
+
+<!-- TODO: Causes the list item to not recieve any input including this button, you can't toggle it off -->
+		      <div class="buttons col">
+		        <button class="button button-assertive button-icon icon ion-ios-minus-outline"
+		          ng-click="toggleShowLaunchlistDelete()"></button>
+		      </div>
+
+					<h2 class="col-80 center">my launchlists</h2>
+
+		      <div class="buttons col">
+		        <button class="button button-balanced button-icon icon ion-plus-circled" ng-click="toggleAddLaunchlist()">
+		        </button>
+		      </div>
+
+		    </ion-item>
+
+
+				<ion-item ng-show="checkAddLaunchlist()">
+					<form ng-submit="addLaunchlist()" class="add_launchlist">
+						<div class="list list-inset">
+						  <label class="item item-input">
+						    <input class="launchlist-name" type="text" placeholder="Name" required>
+						  </label>
+						  <label class="item item-input">
+						    <input class="launchlist-description" type="text" placeholder="Description">
+						  </label>
+						  <label class="item item-input">
+						    <input class="launchlist-icon" type="url" placeholder="Icon" required>
+						  </label>
+					    <button class="button button-positive button-wide">
+					      Submit
+					    </button>
+						</div>
+					</form>
+				</ion-item>
+
+
+				<ion-item ng-repeat="launchlist in user.launchlists" ng-click="loadLaunchlistList( launchlist )" href="#/launchlis/{{ launchlist.link }}" target="_blank">
+
+					<h3> {{launchlist.name}} </h3>
+					<p> {{launchlist.description}} </p>
+
+					<ion-option-button class="button-positive"
+	                       ng-click="shareLaunchlist(launchlist)">
+			      Share
+			    </ion-option-button>
+			    <ion-option-button class="button-info"
+			                       ng-click="editLaunchlist(launchlist)">
+			      Edit
+			    </ion-option-button>
+			    <ion-option-button class="button-assertive"
+			                       ng-click="editLaunchlist(launchlist)">
+			      Delete
+			    </ion-option-button>
+			    <ion-delete-button class="ion-minus-circled"
+			                       ng-click="deleteLaunchlist( $index )">
 			    </ion-delete-button>
 
 				</ion-item>

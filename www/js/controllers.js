@@ -41,6 +41,10 @@ angular.module('main.controllers', [])
   // the current topic being dispalyed to the user
   $scope.topic = {};
 
+  $scope.isHomePage = function() {
+    return $scope.tab == "home";
+  }
+
   // loads a topic into $scope.topic
   $scope.loadTopic = function( topic_name ) {
     if( DEVELOPING )
@@ -364,15 +368,93 @@ angular.module('main.controllers', [])
 
 .controller('UserCtrl', function($scope, databaseService) {
   $scope.tab = "user"; 
-  $scope.resourcesShowDelete = false;
+  $scope.resources_show_delete = false;
   $scope.add_resource = false;
+  $scope.launchlist_show_delete = false;
+  $scope.add_launchlist = false;
+
+  // add new resource to database
   $scope.addResource = function() {
+    var new_resource = {
+      name: jQuery( ".add_resource .resource-name" ).val(),
+      description: jQuery( ".add_resource .resource-description" ).val(),
+      link: jQuery( ".add_resource .resource-link" ).val(),
+      uid: $scope.user.uid
+    };
+
     databaseService.addResource( 
       $scope.user.uid,
-      {
-        name: jQuery( ".add_resource .resource-name" ).val(),
-        description: jQuery( ".add_resource .resource-description" ).val(),
-        link: jQuery( ".add_resource .resource-link" ).val(),
+      new_resource,
+      function() {
+        // update my resources list
+        $scope.user.resources.push( new_resource );
+        // hide add resources
+        $scope.toggleAddResource();
+        // remove old data
+        jQuery( ".add_resource .resource-name" ).val( "" );
+        jQuery( ".add_resource .resource-description" ).val( "" );
+        jQuery( ".add_resource .resource-link" ).val( "" );
+        // tell angular to get off its lazy ass
+        $scope.$apply();
+      }
+    );
+
+  }
+
+  $scope.toggleAddResource = function() {
+    $scope.add_resource = !$scope.add_resource; 
+  }
+
+  $scope.checkAddResource = function() {
+    return $scope.add_resource;
+  }
+
+  $scope.toggleShowDelete = function() {
+    $scope.resources_show_delete = !$scope.resources_show_delete; 
+  }
+
+  $scope.checkShowDelete = function() {
+    return $scope.resources_show_delete;
+  }
+
+  $scope.toggleAddLaunchlist = function() {
+    $scope.add_launchlist = !$scope.add_launchlist;
+  }
+
+  $scope.checkAddLaunchlist = function() {
+    return $scope.add_launchlist;
+  }
+
+  $scope.toggleShowLaunchlistDelete = function() {
+    $scope.launchlist_show_delete = !$scope.launchlist_show_delete;
+  }
+
+  $scope.checkShowLaunchlistDelete = function() {
+    return $scope.launchlist_show_delete;
+  }
+
+  $scope.addLaunchlist = function() {
+    var new_launchlist = {
+      name: jQuery( ".add_launchlist .launchlist-name" ).val(),
+      description: jQuery( ".add_launchlist .launchlist-description" ).val(),
+      icon: jQuery( ".add_launchlist .launchlist-icon" ).val(),
+      uid: $scope.user.uid
+    };
+
+    databaseService.addLaunchlist(
+      $scope.user.uid,
+      new_launchlist,
+      function() {
+        // update my launchlists list
+        $scope.user.launchlists.push( new_launchlist );
+        // hide add resources
+        $scope.toggleAddLaunchlist();
+        // remove old data
+        jQuery( ".add_launchlist .launchlist-name" ).val( "" );
+        jQuery( ".add_launchlist .launchlist-description" ).val( "" );
+        jQuery( ".add_launchlist .launchlist-icon" ).val( "" );
+        // tell angular to get off its lazy ass
+        $scope.$apply();
       }
     );
   }

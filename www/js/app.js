@@ -134,13 +134,35 @@ app.run( function() {
  * @return {Object} object with methods to access db
  */
 app.service( "databaseService", function() {
+  function pushSuccess() {
+    console.log( "databaseService.pushSuccess",  true );
+  }
+
+  function dbError( error ) {
+    console.error( "databaseService.dbError", error );
+  }
 
   return ( {
+
+    addToList: function( list_url, item, onSuccess, onError ) {
+      if( list_url == "" || item == undefined ) return false;
+      if( onSuccess == undefined ) onSuccess = pushSuccess;
+      if( onError == undefined ) onError = dbError;
+
+      var the_list = firebase.database().ref( list_url );
+      var new_item = the_list.push();
+
+      new_item.set( item ).then( onSuccess, onError );
+      return true;
+    },
 
     addResource: function( uid, resource, success, error ) {
       // add resource to database
       var resources = firebase.database().ref( "/resources/" );
       var new_resource = resources.push();
+
+      // if( DEVELOPING )
+      //   console.log( "databaseService.addResource", new_resource.key );
 
       if( success == undefined ) {
         success = function() {
@@ -160,8 +182,8 @@ app.service( "databaseService", function() {
 
       // add resource id to user resources list
       var user_resources = firebase.database().ref( 
-        "users/" + uid + "/resources/" + new_resource.name() );
-      user_resources.set().then( success, error )
+        "users/" + uid + "/resources/" + new_resource.key );
+      user_resources.set( true  ).then( success, error )
 
     },
 
