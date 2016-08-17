@@ -22,7 +22,7 @@ function Topic( name, description, icon ) {
 
 angular.module('main.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading, databaseService) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading, $state, databaseService) {
 
   var music = new Topic( "music" ),
       design = new Topic( "design" ),
@@ -31,7 +31,7 @@ angular.module('main.controllers', [])
   // console.log( music, design, random );
 
   // the current tab i.e. page
-  $scope.tab = "";
+  $scope.tab = "home";
 
   // dct of topics being displayed on the home page
   $scope.topics = {
@@ -41,9 +41,11 @@ angular.module('main.controllers', [])
   // the current topic being dispalyed to the user
   $scope.topic = {};
 
+
   $scope.isHomePage = function() {
-    return $scope.tab == "home";
-  }
+    // return $scope.tab == "home";
+    return $state.current.name == "app.home";
+  };
 
   // loads a topic into $scope.topic
   $scope.loadTopic = function( topic_name ) {
@@ -83,7 +85,8 @@ angular.module('main.controllers', [])
             var obj = {
               type: item.type,
               item: snapshot.val(),
-              order: item.index
+              order: item.index,
+              id: item.value
             };
 
             if( DEVELOPING ) console.log( obj );
@@ -158,7 +161,9 @@ angular.module('main.controllers', [])
       for( let launchlist_id in topic.launchlists )
         databaseService.getLaunchlistById(
           launchlist_id, function( snapshot ) {
-            topic.launchlists_objects.push( snapshot.val() );
+            launchlist = snapshot.val();
+            launchlist.id = launchlist_id;
+            topic.launchlists_objects.push( launchlist );
           }
         )
 
@@ -375,10 +380,20 @@ angular.module('main.controllers', [])
 })
 
 
-.controller('LaunchlistsCtrl', function($scope, databaseService) {
-  $scope.tab = "launchlists";
+.controller('LaunchlistsCtrl', function($scope, $stateParams, databaseService) {
+  // $scope.tab = "launchlists";
+  if( DEVELOPING )
+    console.log( $stateParams );
 
-
+  // get the launchlist from the database
+  databaseService.getLaunchlistById( 
+    $stateParams.launchlist_id,
+    // load the launchlist into the user itnerface
+    function( snapshot ) {
+      $scope.loadLaunchlistList( snapshot.val() );
+    }
+  );
+  
 
 })
 

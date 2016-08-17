@@ -1,5 +1,4 @@
-<ion-side-menus enable-menu-with-back-views="false">
-
+<ion-side-menus enable-menu-with-back-views="true">
 
   <ion-side-menu-content>
 
@@ -9,7 +8,7 @@
       </ion-nav-back-button>
 
       <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
+        <button class="button button-icon button-clear ion-navicon" menu-toggle="right">
         </button>
       </ion-nav-buttons>
 
@@ -20,8 +19,6 @@
   </ion-side-menu-content>
 
 
-<!--   <ion-side-menu side="left" expose-aside-when="large">
- -->
   <ion-side-menu side="right" expose-aside-when="large">
 
     <ion-header-bar class="bar-stable">
@@ -29,7 +26,7 @@
       <h1 class="title">Menu</h1>
 
       <div class="buttons">
-
+        
         <a ng-hide="isHomePage()" class="button ion-home" ng-click="changeTab('home')" href="#/home"></a>
         <a ng-hide="user.logged_in" class="button ion-person" ng-click="login()"></a>
         <a ng-show="user.logged_in" class="button ion-power" ng-click="logout()"></a>

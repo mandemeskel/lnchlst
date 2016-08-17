@@ -4,21 +4,21 @@
 
     <ion-nav-back-button> </ion-nav-back-button> 
 
-    <ion-nav-buttons side="left"> 
-      <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button> 
+    <ion-nav-buttons side="right"> 
+      <button class="button button-icon button-clear ion-navicon" menu-toggle="right"></button> 
     </ion-nav-buttons>
     
   </ion-nav-bar>
-  
+
 
   <ion-content>
     
-    <h1>{{ topic.name || 'Topic' | capitalize }}</h1>
+    <h1 class="center">{{ topic.name || 'Topic' | capitalize }}</h1>
     <p>{{ topic.description }}</p>
 
 	<ion-list>
 
-      <ion-item ng-click="loadLaunchlistList( launchlist )" ng-repeat="launchlist in topic.launchlists_objects" href="#/launchlists/{{ launchlist.name }}">
+      <ion-item ng-click="loadLaunchlistList( launchlist )" ng-repeat="launchlist in topic.launchlists_objects" href="#/launchlists/{{launchlist.id}}">
 
         <h3> {{ launchlist.name }} </h3>
         <p> {{ launchlist.description }} </p>

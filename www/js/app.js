@@ -86,7 +86,7 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
   })
 
   .state('app.launchlists', {
-    url: '/launchlists/:launchlist_name',
+    url: '/launchlists/:launchlist_id',
     views: {
       'menuContent': {
         templateUrl: 'templates/launchlists.html',
@@ -107,7 +107,6 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise( '/' );
-
 
 });
 

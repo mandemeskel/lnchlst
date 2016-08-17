@@ -4,8 +4,8 @@
 
     <ion-nav-back-button> </ion-nav-back-button> 
 
-    <ion-nav-buttons side="left"> 
-      <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button> 
+    <ion-nav-buttons side="right"> 
+      <button class="button button-icon button-clear ion-navicon" menu-toggle="right"></button> 
     </ion-nav-buttons>
     
   </ion-nav-bar>
@@ -13,7 +13,7 @@
 
   <ion-content>
     
-    <h1>{{ launchlist.name || 'Topic' | capitalize }}</h1>
+    <h1 class="center">{{ launchlist.name || 'Topic' | capitalize }}</h1>
     <p>{{ launchlist.description }}</p>
 
 	<ion-list>
@@ -30,7 +30,7 @@
 
             <h3> {{ obj.item.name }} </h3>
             <p> {{ obj.item.description }} </p>
-            <a class="overlay" href="#/launchlists/{{obj.item.name}}" target="_blank"></a>
+            <a class="overlay" href="#/launchlists/{{obj.id}}" target="_blank"></a>
 
           </div>
           
