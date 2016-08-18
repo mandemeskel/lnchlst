@@ -23,7 +23,7 @@ h1.center, h2.center, h3.center {
 
 
 .heading.item {
-  background-color: #ccc;  
+  background-color: #ccc;
 	cursor: default !important;
 }
 .heading.item h3 {
@@ -32,9 +32,34 @@ h1.center, h2.center, h3.center {
 }
 
 .resource.item {
-  background-color: rgba(17, 193, 243, 0.13);  
+  background-color: rgba(17, 193, 243, 0.13);
 }
 
 .launchlist.item {
-  background-color: rgba(255, 201, 0, 0.11);  
+  background-color: rgba(255, 201, 0, 0.11);
+}
+
+
+div.tag-bar {
+    display: block;
+}
+
+a.button.tag {
+	font-size: 12px;
+	padding: 1px 5px;
+	display: block;
+	float: left;
+	margin: 4px 8px;
+	width: auto;
+	/* height: 20px; */
+	transition: 1s ease all;
+	border-radius: 0;
+}
+
+a.button.tag:hover {
+	transform: scale( 1.1 );
+}
+
+a.button.tag.selected {
+	background-color: #28a54c;
 }

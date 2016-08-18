@@ -41,6 +41,51 @@ angular.module('main.controllers', [])
   // the current topic being dispalyed to the user
   $scope.topic = {};
 
+  // list of tags for resources
+  function Tag( name ) {
+    this.display_name = name;
+    this.val = name.replace( " ", "-" ).replace( "/", "-" );
+    this.css_class = "button tag tag-" + this.val;
+    this.selected = false;
+    this.deselectTag = function() {
+      this.selected = false;
+      this.css_class = this.css_class.replace( " selected" );
+    }
+  };
+
+  $scope.resource_tags = [
+    new Tag( "sound design" ),
+    new Tag( "music theory" ),
+    new Tag( "mixing" ),
+    new Tag( "mastery" ),
+    new Tag( "software/DAWs" ),
+    new Tag( "hardware" ),
+    new Tag( "genre" ),
+    new Tag( "communities" ),
+    new Tag( "games/tools" )
+  ];
+
+  $scope.tagClicked = function( tag ) {
+    if( tag.selected )
+      tag.css_class = tag.css_class.replace( " selected", "" );
+    else
+      tag.css_class = tag.css_class + " selected";
+    tag.selected = !tag.selected;
+  };
+
+  $scope.getSelectedTags = function( tags ) {
+    var selected = [];
+    for( tag of tags ) {
+      if( !tag.selected )
+        selected.push( tag.display_name );
+    }
+    return selected;
+  };
+
+  $scope.deselectTags = function( tags ) {
+    for( tag of tags )
+      tag.deselectTag();
+  };
 
   $scope.isHomePage = function() {
     // return $scope.tab == "home";
@@ -386,14 +431,14 @@ angular.module('main.controllers', [])
     console.log( $stateParams );
 
   // get the launchlist from the database
-  databaseService.getLaunchlistById( 
+  databaseService.getLaunchlistById(
     $stateParams.launchlist_id,
     // load the launchlist into the user itnerface
     function( snapshot ) {
       $scope.loadLaunchlistList( snapshot.val() );
     }
   );
-  
+
 
 })
 
@@ -412,11 +457,13 @@ angular.module('main.controllers', [])
       description: jQuery( ".add_resource .resource-description" ).val(),
       link: jQuery( ".add_resource .resource-link" ).val(),
       uid: $scope.user.uid
-    };
+    },
+    tags = $scope.getSelectedTags( $scope.resource_tags );
 
     databaseService.addResource(
       $scope.user.uid,
       new_resource,
+      tags,
       function() {
         // update my resources list
         $scope.user.resources.push( new_resource );
@@ -489,6 +536,7 @@ angular.module('main.controllers', [])
         $scope.$apply();
       }
     );
+
   }
 
 });

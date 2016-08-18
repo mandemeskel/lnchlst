@@ -129,7 +129,7 @@ app.run( function() {
 
 /**
  * Handles all firebase database logic
- * @param  {None} 
+ * @param  {None}
  * @return {Object} object with methods to access db
  */
 app.service( "databaseService", function() {
@@ -155,7 +155,11 @@ app.service( "databaseService", function() {
       return true;
     },
 
-    addResource: function( uid, resource, success, error ) {
+    addLaunchlist: function( user_id, launchlist, onSuccess, onError ) {
+
+    },
+
+    addResource: function( uid, resource, tags, success, error ) {
       // add resource to database
       var resources = firebase.database().ref( "/resources/" );
       var new_resource = resources.push();
@@ -180,10 +184,23 @@ app.service( "databaseService", function() {
         }, error );
 
       // add resource id to user resources list
-      var user_resources = firebase.database().ref( 
+      var user_resources = firebase.database().ref(
         "users/" + uid + "/resources/" + new_resource.key );
       user_resources.set( true  ).then( success, error )
 
+    },
+
+    // TODO: add tags to resources/launchlists
+    addTag: function( ref_url, tags ) {
+      function addedTag() {
+        console.log( "Added tag" );
+      }
+
+      // add tag to entity
+      for( tag of tags )
+        this.addToList( ref_url, tag, addedTag );
+
+      //update tag with id of entity
     },
 
     init: function( $scope ) {
@@ -195,10 +212,10 @@ app.service( "databaseService", function() {
 
         // TODO: use Topic object
         $scope.topics = snapshot.val();
-        
+
         // for( let key in $scope.topics ) {
         //   let topic = $scope.topics[ key ];
-          
+
         //   if( topic.launchlists == [] ) continue;
         //   topic.launchlists_objects = [];
 
@@ -217,7 +234,7 @@ app.service( "databaseService", function() {
 
     get: function( ref_url, apromise, on_error ) {
       if( DEVELOPING )
-        console.log( "databaseService.get", ref_url, apromise );
+        console.log( "databaseService.get", ref_url );
 
       if( ref_url == "" || apromise == undefined ) return [];
 
@@ -294,7 +311,7 @@ app.service( "databaseService", function() {
       if( apromise == undefined ) {
 
         var models = []
-        response.once( "value", function( snapshot ) { 
+        response.once( "value", function( snapshot ) {
           if( DEVELOPING )
             console.log( "databaseService.getValueAtRef", snapshot.val() );
           models.push( snapshot.val() );
@@ -307,7 +324,7 @@ app.service( "databaseService", function() {
 
     },
 
-    getTopics: function() { 
+    getTopics: function() {
       var topics,
           listner = function( snapshot ) {
             if( DEVELOPING )
@@ -337,7 +354,7 @@ app.service( "databaseService", function() {
 
     put: function( ref_url, data, apromise, on_error ) {
       if( ref_url == "" ) {
-        if( DEVELOPING ) 
+        if( DEVELOPING )
           console.log( "databaseService.put", "ref_url is empty" );
         return "";
       }
@@ -358,7 +375,7 @@ app.service( "databaseService", function() {
 
     },
 
-    setTopicsListner: function( listner, db_event ) { 
+    setTopicsListner: function( listner, db_event ) {
       // var topics;
 
       if( listner == undefined )
@@ -380,6 +397,55 @@ app.service( "databaseService", function() {
     }
 
   } );
+
+} );
+
+
+app.service( "loading", function($ionicLoading) {
+
+    var show = function() {
+      $ionicLoading.show({
+        template: 'Loading...'
+      }).then(function(){
+         console.log("The loading indicator is now displayed");
+      });
+    };
+
+    var hide = function(){
+      $ionicLoading.hide().then(function(){
+         console.log("The loading indicator is now hidden");
+      });
+    };
+
+    return {
+        show: function( template, startLoading ) {
+            if( template == undefined )
+                template = "Loading...";
+            if( startLoading == undefined )
+                startLoading = function() {
+                    if( DEVELOPING )
+                        console.log( "Started loading.." );
+                };
+
+            $ionicLoading.show( {
+                template: template
+            } ).then( function() {
+                startLoading();
+            } )
+        },
+        hide: function( stopLoading ) {
+
+            if( stopLoading == undefined )
+                stopLoading = function() {
+                    if( DEVELOPING )
+                        console.log( "Stoped loading." );
+                };
+
+            $ionicLoading.hide().then( stopLoading );
+
+        }
+    }
+
 
 } );
 

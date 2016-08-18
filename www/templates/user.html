@@ -3,17 +3,17 @@
 
 	<ion-nav-bar class="bar-balanced">
 
-		<ion-nav-back-button> </ion-nav-back-button> 
+		<ion-nav-back-button> </ion-nav-back-button>
 
-		<ion-nav-buttons side="right"> 
-			<button class="button button-icon button-clear ion-navicon" menu-toggle="right"></button> 
+		<ion-nav-buttons side="right">
+			<button class="button button-icon button-clear ion-navicon" menu-toggle="right"></button>
 		</ion-nav-buttons>
-		
+
 	</ion-nav-bar>
 
 
 	<ion-content>
-		
+
 		<!-- resources -->
 		<div id="my_resources">
 
@@ -49,6 +49,9 @@
 						  <label class="item item-input">
 						    <input class="resource-link" type="url" placeholder="Link" required>
 						  </label>
+						  <div class="button-bar tag-bar item">
+						    <a ng-repeat="tag in resource_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
+						  </div>
 					    <button class="button button-positive button-wide">
 					      Submit
 					    </button>
