@@ -76,8 +76,8 @@ angular.module('main.controllers', [])
   $scope.getSelectedTags = function( tags ) {
     var selected = [];
     for( tag of tags ) {
-      if( !tag.selected )
-        selected.push( tag.display_name );
+      if( tag.selected )
+        selected.push( tag.val );
     }
     return selected;
   };
@@ -458,6 +458,7 @@ angular.module('main.controllers', [])
       link: jQuery( ".add_resource .resource-link" ).val(),
       uid: $scope.user.uid
     },
+    // this returns an array of tags url friendly value
     tags = $scope.getSelectedTags( $scope.resource_tags );
 
     databaseService.addResource(
@@ -473,6 +474,7 @@ angular.module('main.controllers', [])
         jQuery( ".add_resource .resource-name" ).val( "" );
         jQuery( ".add_resource .resource-description" ).val( "" );
         jQuery( ".add_resource .resource-link" ).val( "" );
+        $scope.deselectTags( $scope.resource_tags );
         // tell angular to get off its lazy ass
         $scope.$apply();
       }

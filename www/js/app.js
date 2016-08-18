@@ -143,7 +143,7 @@ app.service( "databaseService", function() {
 
   return ( {
 
-    addToList: function( list_url, item, onSuccess, onError ) {
+    addNewItemToList: function( list_url, item, onSuccess, onError ) {
       if( list_url == "" || item == undefined ) return false;
       if( onSuccess == undefined ) onSuccess = pushSuccess;
       if( onError == undefined ) onError = dbError;
@@ -152,6 +152,15 @@ app.service( "databaseService", function() {
       var new_item = the_list.push();
 
       new_item.set( item ).then( onSuccess, onError );
+      return true;
+    },
+
+    addToList: function( list_url, onSuccess, onError ) {
+      if( onSuccess == undefined ) onSuccess = pushSuccess;
+      if( onError == undefined ) onError = dbError;
+
+      var the_list = firebase.database().ref( list_url );
+      the_list.set( true ).then( onSuccess, onError );
       return true;
     },
 
@@ -184,23 +193,33 @@ app.service( "databaseService", function() {
         }, error );
 
       // add resource id to user resources list
+      var resource_url = "/resources/" + new_resource.key;
       var user_resources = firebase.database().ref(
-        "users/" + uid + "/resources/" + new_resource.key );
-      user_resources.set( true  ).then( success, error )
+        "users/" + uid + resource_url );
+      user_resources.set( true  ).then( success, error );
+
+      this.addTag( new_resource.key, "resource", tags );
 
     },
 
     // TODO: add tags to resources/launchlists
-    addTag: function( ref_url, tags ) {
-      function addedTag() {
-        console.log( "Added tag" );
+    addTag: function( obj_id, obj_type, tags, onSuccess, onError ) {
+      if( onSuccess == undefined ) {
+        onSuccess = function() {
+          console.log( "Added tag" );
+        }
       }
 
-      // add tag to entity
-      for( tag of tags )
-        this.addToList( ref_url, tag, addedTag );
+      var obj_url = "/" + obj_type + "s";
+      var ref_url = obj_url + "/" + obj_id + "/tags/";
+      var obj_id_url =  obj_url + "/" + obj_id;
+      for( tag of tags ) {
+        // add tag to entity
+        this.addToList( ref_url + tag, onSuccess );
 
-      //update tag with id of entity
+        // update tag with id of entity
+        this.addToList( "/tags/" + tag + obj_id_url );
+      }
     },
 
     init: function( $scope ) {
