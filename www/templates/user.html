@@ -41,19 +41,22 @@
 					<form ng-submit="addResource()" class="add_resource">
 						<div class="list list-inset">
 						  <label class="item item-input">
-						    <input class="resource-name" type="text" placeholder="Name" required>
+						    <input ng-model="resource.name" class="resource-name" type="text" placeholder="Name" required>
 						  </label>
 						  <label class="item item-input">
-						    <input class="resource-description" type="text" placeholder="Description">
+						    <input ng-model="resource.description" class="resource-description" type="text" placeholder="Description">
 						  </label>
 						  <label class="item item-input">
-						    <input class="resource-link" type="url" placeholder="Link" required>
+						    <input ng-model="resource.link" class="resource-link" type="url" placeholder="Link" required>
 						  </label>
 						  <div class="button-bar tag-bar item">
 						    <a ng-repeat="tag in resource_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
 						  </div>
-					    <button class="button button-positive button-wide">
+					    <button class="button button-half button-positive">
 					      Submit
+					    </button>
+					    <button class="button button-half button-stable" ng-click="resource.clear()">
+					      Clear
 					    </button>
 						</div>
 					</form>
@@ -74,7 +77,7 @@
 			      Edit
 			    </ion-option-button>
 			    <ion-option-button class="button-assertive"
-			                       ng-click="editResource(resource)">
+			                       ng-click="deleteResource(resource)">
 			      Delete
 			    </ion-option-button>
 			    <ion-delete-button class="ion-minus-circled"

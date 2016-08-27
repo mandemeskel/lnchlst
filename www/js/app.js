@@ -361,7 +361,10 @@ app.service( "databaseService", function() {
 
       if( apromise == undefined ) {
         apromise = function( snapshot ) {
-          console.log( "databaseService.put", snapshot.val() );
+          if( snapshot != undefined )
+            console.log( "databaseService.put", snapshot.val() );
+          else
+            console.log( "databaseService.put, success" );
         }
       }
 
@@ -394,6 +397,23 @@ app.service( "databaseService", function() {
       // whenever the firebase value is updated call this
       // function
       topics.on( db_event, listner );
+    },
+
+    // TODO: make function that only replaces certain properties of entity
+    // NOTE: THIS REPLACES THE ENTIRE ENTITY
+    updateEntity: function( ref_url, new_entity, old_entity, apromise, onError ) {
+      if( ref_url == undefined || new_entity == undefined ) {
+        console.error( "databaseService.updateEntity, undefined arguments passed", ref_url, new_entity );
+        return false;
+      }
+
+      // remove any key within the entity, we don't want self refrence to duplicate data
+      if( new_entity.key != undefined )
+        delete new_entity.key;
+
+      // TODO: compare entities, old vs new, before sending, full update or partial depending on this comparison
+      this.put( ref_url, new_entity, apromise, onError );
+      return true;
     }
 
   } );

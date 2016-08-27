@@ -11,6 +11,10 @@ a.overlay {
 .button-wide {
 	width: 100%;
 }
+.button-half {
+  width: 50%;
+  margin: 0 auto;
+}
 
 h1.center, h2.center, h3.center {
 	text-align: center;

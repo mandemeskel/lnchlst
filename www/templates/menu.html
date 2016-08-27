@@ -26,7 +26,7 @@
       <h1 class="title">Menu</h1>
 
       <div class="buttons">
-        
+
         <a ng-hide="isHomePage()" class="button ion-home" ng-click="changeTab('home')" href="#/home"></a>
         <a ng-hide="user.logged_in" class="button ion-person" ng-click="login()"></a>
         <a ng-show="user.logged_in" class="button ion-power" ng-click="logout()"></a>
@@ -46,7 +46,7 @@
           Home
         </ion-item> -->
         <ion-item ng-hide="tab == 'user' || !user.logged_in" menu-close ng-click="changeTab('user')" href="#/user">
-          My Acount
+          My Account
         </ion-item>
         <ion-item menu-close ng-click="changeTab('search')" href="#/search">
           Search

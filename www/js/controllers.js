@@ -50,7 +50,11 @@ angular.module('main.controllers', [])
     this.deselectTag = function() {
       this.selected = false;
       this.css_class = this.css_class.replace( " selected" );
-    }
+    };
+    this.selectTag = function() {
+      this.selected = true;
+      this.css_class = this.css_class + " selected";
+    };
   };
 
   $scope.resource_tags = [
@@ -73,16 +77,23 @@ angular.module('main.controllers', [])
     tag.selected = !tag.selected;
   };
 
-  $scope.getSelectedTags = function( tags ) {
+  $scope.getSelectedTags = function( tags, return_vals_only ) {
     var selected = [];
+
     for( tag of tags ) {
-      if( !tag.selected )
+      if( !tag.selected ) continue;
+
+      if( return_vals_only )
+        selected.push( tag.val );
+      else
         selected.push( tag.display_name );
+
     }
     return selected;
   };
 
   $scope.deselectTags = function( tags ) {
+    if( tags == undefined ) tags = $scope.resource_tags;
     for( tag of tags )
       tag.deselectTag();
   };
@@ -301,7 +312,7 @@ angular.module('main.controllers', [])
                   name: $scope.user.displayName,
                   email: $scope.user.email,
                   icon: $scope.user.photoURL,
-                  // firebase does not support Date object cause json
+                  // firebase db does not support Date object cause it ues json
                   date_created: new Date().toString()
                 },
                 loadUser
@@ -317,7 +328,10 @@ angular.module('main.controllers', [])
                 databaseService.get(
                   "/resources/" + resource_id,
                   function( snapshot ) {
-                    $scope.user.resources.push( snapshot.val() );
+                    let resource = snapshot.val();
+                    // add resource key to resource object
+                    resource.key = resource_id;
+                    $scope.user.resources.push( resource );
                   }
                 );
               }
@@ -449,68 +463,175 @@ angular.module('main.controllers', [])
   $scope.add_resource = false;
   $scope.launchlist_show_delete = false;
   $scope.add_launchlist = false;
+  $scope.resource = {
+    editing_resource: false,
+    key: "",
+    name: "",
+    description: "",
+    link: "",
+    tags: [],
+    // the orginal unchanged resource
+    original: {},
+    clear: function() {
+      this.editing_resource = false;
+      this.original = {};
+      this.key = "";
+      this.name = "";
+      this.description = "";
+      this.link = "";
+      // this.tags = [];
+      // TODO: also clear tags
+      $scope.deselectTags( $scope.resource_tags );
+    },
+    // returns a pure resource ready to be saved to db
+    get: function() {
+      var selected_tags = $scope.getSelectedTags( $scope.resource_tags, true ),
+        tag_dict = {};
+
+      for( tag_val of selected_tags )
+        tag_dict[ tag_val ] = true;
+
+      console.log( tag_dict );
+
+      return {
+        name: this.name,
+        description: this.description,
+        link: this.link,
+        uid: this.original.uid,
+        tags: tag_dict
+      }
+    },
+    // sets this object with resource's values
+    set: function( resource ) {
+      if( resource == undefined ) {
+        console.error( "resource.set, no resource passed" , resource );
+        return false;
+      }
+
+      this.original = resource;
+      this.editing_resource = true;
+      this.key = resource.key;
+      this.name = resource.name;
+      this.description = resource.description;
+      this.link = resource.link;
+
+      // TODO: add a way to edit tags
+      for( resource_tag in resource.tags ) {
+        console.log( resource_tag );
+        // TODO: create tag dictionary to avoid this loadTopic...tags_dict[ resource.tag ].selectTag()
+        for( tag of $scope.resource_tags ) {
+          if( tag.val == resource_tag ) {
+            tag.selectTag();
+            // this.tags.push( tag );
+          }
+        }
+      }
+    },
+    // call one of the tag functions in mian controller
+    setTags: function( resource_tags ) {
+    },
+    update: function() {
+
+    }
+  }
 
   // add new resource to database
   $scope.addResource = function() {
-    var new_resource = {
-      name: jQuery( ".add_resource .resource-name" ).val(),
-      description: jQuery( ".add_resource .resource-description" ).val(),
-      link: jQuery( ".add_resource .resource-link" ).val(),
-      uid: $scope.user.uid
-    },
-    tags = $scope.getSelectedTags( $scope.resource_tags );
+    if( $scope.resource.editing_resource ) {
+      console.log( "editing resource" );
 
-    databaseService.addResource(
-      $scope.user.uid,
-      new_resource,
-      tags,
-      function() {
-        // update my resources list
-        $scope.user.resources.push( new_resource );
-        // hide add resources
-        $scope.toggleAddResource();
-        // remove old data
-        jQuery( ".add_resource .resource-name" ).val( "" );
-        jQuery( ".add_resource .resource-description" ).val( "" );
-        jQuery( ".add_resource .resource-link" ).val( "" );
-        // tell angular to get off its lazy ass
-        $scope.$apply();
-      }
-    );
+      var new_rource = $scope.resource.get(),
+        old_resource = $scope.resource.original;
 
-  }
+      console.log( "new resource", new_rource );
 
-  $scope.toggleAddResource = function() {
-    $scope.add_resource = !$scope.add_resource;
-  }
+      // TODO: update resource in resources list
+      databaseService.updateEntity(
+        "/resources/" + $scope.resource.key,
+        new_rource,
+        old_resource
+      );
+
+    } else {
+
+      // TODO: update this to use $scope.resource
+      var new_resource = {
+        name: jQuery( ".add_resource .resource-name" ).val(),
+        description: jQuery( ".add_resource .resource-description" ).val(),
+        link: jQuery( ".add_resource .resource-link" ).val(),
+        uid: $scope.user.uid
+      },
+      tags = $scope.getSelectedTags( $scope.resource_tags );
+
+      databaseService.addResource(
+        $scope.user.uid,
+        new_resource,
+        tags,
+        function() {
+          // update my resources list
+          $scope.user.resources.push( new_resource );
+          // hide add resources
+          $scope.toggleAddResource();
+          // remove old data
+          jQuery( ".add_resource .resource-name" ).val( "" );
+          jQuery( ".add_resource .resource-description" ).val( "" );
+          jQuery( ".add_resource .resource-link" ).val( "" );
+          // tell angular to get off its lazy ass
+          $scope.$apply();
+        }
+      );
+    }
+
+  };
+
+  $scope.editResource = function(resource) {
+    if( DEVELOPING )
+      console.log( resource );
+
+    // clear old resources
+    $scope.resource.clear();
+
+    // load resource data on to form
+    $scope.resource.set( resource );
+
+    //display form
+    $scope.toggleAddResource( true );
+  };
+
+  $scope.toggleAddResource = function( force_on ) {
+    if( force_on )
+      $scope.add_resource = true;
+    else
+      $scope.add_resource = !$scope.add_resource;
+  };
 
   $scope.checkAddResource = function() {
     return $scope.add_resource;
-  }
+  };
 
   $scope.toggleShowDelete = function() {
     $scope.resources_show_delete = !$scope.resources_show_delete;
-  }
+  };
 
   $scope.checkShowDelete = function() {
     return $scope.resources_show_delete;
-  }
+  };
 
   $scope.toggleAddLaunchlist = function() {
     $scope.add_launchlist = !$scope.add_launchlist;
-  }
+  };
 
   $scope.checkAddLaunchlist = function() {
     return $scope.add_launchlist;
-  }
+  };
 
   $scope.toggleShowLaunchlistDelete = function() {
     $scope.launchlist_show_delete = !$scope.launchlist_show_delete;
-  }
+  };
 
   $scope.checkShowLaunchlistDelete = function() {
     return $scope.launchlist_show_delete;
-  }
+  };
 
   $scope.addLaunchlist = function() {
     var new_launchlist = {
@@ -537,6 +658,9 @@ angular.module('main.controllers', [])
       }
     );
 
-  }
+  };
+
+  $scope.editLaunchlist = function() {
+  };
 
 });
