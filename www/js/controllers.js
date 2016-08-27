@@ -81,6 +81,7 @@ angular.module('main.controllers', [])
     var selected = [];
 
     for( tag of tags ) {
+<<<<<<< HEAD
       if( !tag.selected ) continue;
 
       if( return_vals_only )
@@ -88,6 +89,10 @@ angular.module('main.controllers', [])
       else
         selected.push( tag.display_name );
 
+=======
+      if( tag.selected )
+        selected.push( tag.val );
+>>>>>>> a2af25259bd314699a9506ab954ed9398806dd02
     }
     return selected;
   };
@@ -501,6 +506,7 @@ angular.module('main.controllers', [])
         tags: tag_dict
       }
     },
+<<<<<<< HEAD
     // sets this object with resource's values
     set: function( resource ) {
       if( resource == undefined ) {
@@ -525,6 +531,27 @@ angular.module('main.controllers', [])
             // this.tags.push( tag );
           }
         }
+=======
+    // this returns an array of tags url friendly value
+    tags = $scope.getSelectedTags( $scope.resource_tags );
+
+    databaseService.addResource(
+      $scope.user.uid,
+      new_resource,
+      tags,
+      function() {
+        // update my resources list
+        $scope.user.resources.push( new_resource );
+        // hide add resources
+        $scope.toggleAddResource();
+        // remove old data
+        jQuery( ".add_resource .resource-name" ).val( "" );
+        jQuery( ".add_resource .resource-description" ).val( "" );
+        jQuery( ".add_resource .resource-link" ).val( "" );
+        $scope.deselectTags( $scope.resource_tags );
+        // tell angular to get off its lazy ass
+        $scope.$apply();
+>>>>>>> a2af25259bd314699a9506ab954ed9398806dd02
       }
     },
     // call one of the tag functions in mian controller
