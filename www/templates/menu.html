@@ -45,7 +45,7 @@
         <ion-item menu-close href="#/home">
           Home
         </ion-item> -->
-        <ion-item ng-hide="tab == 'user' || !user.logged_in" menu-close ng-click="changeTab('user')" href="#/user">
+        <ion-item ng-hide="showMyAccountBtn()" menu-close ng-click="changeTab('user')" href="#/user">
           My Account
         </ion-item>
         <ion-item menu-close ng-click="changeTab('search')" href="#/search">

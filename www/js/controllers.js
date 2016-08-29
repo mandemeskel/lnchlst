@@ -281,6 +281,9 @@ angular.module('main.controllers', [])
 
   // check if user is logged in
   $scope.user = {};
+  $scope.showMyAccountBtn = function() {
+    return ( $scope.tab == 'user' || !$scope.user.logged_in );
+  }
   $scope.isLogedIn = function() {
     firebase.auth().onAuthStateChanged(
       function( user ) {
