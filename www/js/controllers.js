@@ -24,6 +24,7 @@ angular.module('main.controllers', [])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading, $state, databaseService) {
 
+  // create dummy topics
   var music = new Topic( "music" ),
       design = new Topic( "design" ),
       random = new Topic( "random" );
@@ -33,15 +34,19 @@ angular.module('main.controllers', [])
   // the current tab i.e. page
   $scope.tab = "home";
 
-  // dct of topics being displayed on the home page
+  // dummy topics to display on the home page
   $scope.topics = {
       // music, design, random
   };
 
-  // the current topic being dispalyed to the user
+  // the current topic being dispalyed in topic page
   $scope.topic = {};
 
   // list of tags for resources
+  /**
+   * Tag class for modeling resource/launchlist tags
+   * @param {String} name display name of tag
+   */
   function Tag( name ) {
     this.display_name = name;
     this.val = name.replace( " ", "-" ).replace( "/", "-" );
@@ -584,7 +589,12 @@ angular.module('main.controllers', [])
 
   };
 
-  $scope.editResource = function(resource) {
+  /**
+    Edit existing resource
+    @param resource Object
+    @return null
+  **/
+  $scope.editResource = function( resource ) {
     if( DEVELOPING )
       console.log( resource );
 
