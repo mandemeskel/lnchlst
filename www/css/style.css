@@ -321,6 +321,9 @@ ion-view ion-content {
 	.neon#homepage ion-nav-bar {
 		display: none;
 	}
+	.neon#homepage ion-content.has-header {
+    top: 0;
+	}
 }
 
 /**
