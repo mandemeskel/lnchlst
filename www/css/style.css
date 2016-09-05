@@ -11,6 +11,9 @@ a.overlay {
 div.center {
 	text-align: center;
 }
+.center-text {
+	text-align: center;
+}
 
 .button-wide {
 	width: 100%;
@@ -83,6 +86,19 @@ ion-view ion-content {
 .bar-transparent.bar.bar-header {
   border: none;
 }
+.bar-transparent {
+	background-color: transparent;
+}
+.bar-black  {
+	background-color: black;
+	border-color: black;
+	color: white;
+}
+.bar-black .back-button,
+.bar-black .menu-button  {
+	color: white;
+}
+
 
 /**
  * Neon theme
@@ -180,6 +196,134 @@ ion-view ion-content {
 }
 
 /**
+ * Neon theme - home
+ */
+.neon#homepage {
+	background-color: black;
+	background-image: url( "/img/starybackground.png" );
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: white;
+	font-size: 16px;
+}
+.neon#homepage img {
+	display: block;
+	margin: 0 auto;
+	max-width: 100%;
+	height: auto;
+}
+.neon#homepage a.clickable {
+	transition: 1s;
+	display: block;
+}
+.neon#homepage a.clickable:hover {
+	transform: scale( 1.2 );
+	opacity: 0.9;
+}
+.neon#homepage ion-content,
+.neon#homepage ion-nav-bar {
+	background-color: transparent;
+	border-color: transparent;
+}
+.neon#homepage .back-button {
+	color: white;
+}
+.neon#homepage .title,
+.neon#homepage .mission {
+	color: white;
+	text-align: center;
+	font-weight: bold;
+	width: 100%;
+}
+.neon#homepage .title {
+	font-size: 5em;
+	text-shadow: #db0a5b 1px 0px 1px, #db0a5b 0px -1px 0px, #db0a5b -1px 0px 0px, #db0a5b 0px 1px 0px;
+}
+.neon#homepage .missionstatement-wrapper {
+	margin-bottom: 80px;
+}
+.neon#homepage .mission {
+	font-size: 2.5em;
+	text-shadow: #65a96f 1px 0px 1px, #65a96f 0px -1px 0px, #65a96f -1px 0px 0px, #65a96f 0px 1px 0px;
+}
+.neon#homepage #homepage-footer {
+	margin-top: 50px;
+}
+.neon#homepage .topic {
+	width: 30%;
+	margin: 0 auto;
+	min-width: 200px;
+	max-width: 300px;
+	display: inline-block;
+	transition: 1s;
+}
+.neon#homepage .topic-icon {
+	display: block;
+	text-align: center;
+	width: 100%;
+	transition: 1s;
+}
+.neon#homepage .topic:hover .topic-icon {
+	margin-bottom: 40px;
+	transform: scale( 1.1 );
+}
+.neon#homepage .topic-name {
+	font-size: 2em;
+	color: white;
+	text-shadow: #65a96f 1px 0px 1px, #65a96f 0px -1px 0px, #65a96f -1px 0px 0px, #65a96f 0px 1px 0px;
+	margin-top: 0;
+	transition: 1s;
+}
+.neon#homepage .topic:hover .topic-name {
+	opacity: 0.6;
+	transform: scale( 0.8 );
+}
+.neon#homepage .topic-description {
+	display: none;
+}
+.neon#homepage .topic-icon {
+	background-image: url( "/img/pinkrocket.png" );
+	background-repeat: no-repeat;
+	background-size: cover;
+	width: 100px;
+	height: 164px;
+	margin: 0 auto;
+}
+.neon#homepage .topic-design .topic-icon {
+	background-image: url( "/img/pinkrocket.png" );
+}
+.neon#homepage .topic-music .topic-icon {
+	background-image: url( "/img/bluerocket.png" );
+}
+.neon#homepage .topic-random .topic-icon {
+	background-image: url( "/img/greenrocket.png" );
+}
+.neon#homepage .topic .topic-name > i {
+	background-repeat: no-repeat;
+	background-size: cover;
+	width: 182px;
+	height: 62px;
+	display: block;
+	margin: 0 auto;
+}
+.neon#homepage .topic-design .topic-name > i {
+	background-image: url("/img/designtitle.png");
+}
+.neon#homepage .topic-music .topic-name > i {
+	background-image: url("/img/musictitle.png");
+}
+.neon#homepage .topic-random .topic-name > i {
+	background-image: url("/img/webtitle.png");
+	width: 142px;
+	height: 62px;
+}
+@media ( min-width: 769px ) {
+	.neon#homepage ion-nav-bar {
+		display: none;
+	}
+}
+
+/**
  * Neon theme - modals
  */
 .neon.modal {
@@ -227,8 +371,10 @@ ion-view ion-content {
 	border-radius: 10px;
 	margin-top: 25px;
 	color: white;
-	box-shadow: #5d5d5f 0px 5px 0;
+	box-shadow: white 0px 5px 0;
 	margin-bottom: 10px;
+	border: 2px solid white;
+	border-bottom-color: white;
 }
 .neon.modal form .list-inset {
 	background: transparent;
@@ -315,6 +461,7 @@ ion-view ion-content {
 .neon.modal .checkbox span {
   border-bottom: 2px solid #6b344b;
 }
+
 /**
  * Neon theme - icons
  */

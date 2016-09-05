@@ -1,28 +1,63 @@
-<ion-view view-title="Home">
-
+<ion-view id="homepage" class="neon">
 	<!-- TODO: this include is not working -->
 	<!-- <div ng-include="templates/nav-bar.html"></div> -->
 
-	<ion-nav-bar class="bar-balanced">
+	<ion-nav-bar class="bar-transparent">
 
-		<ion-nav-back-button> </ion-nav-back-button> 
+		<ion-nav-back-button> </ion-nav-back-button>
 
-		<ion-nav-buttons side="right"> 
-			<button class="button button-icon button-clear ion-navicon" menu-toggle="right"></button> 
+		<!-- <h1 class="title">Home</> -->
+
+		<ion-nav-buttons side="right">
+			<button class="button button-icon menu-button ion-navicon" menu-toggle="right"></button>
 		</ion-nav-buttons>
-		
+
 	</ion-nav-bar>
 
 	<ion-content>
-		<ion-list>
 
-			<ion-item ng-click="loadTopic(topic.name)" ng-repeat="topic in topics" href="#/topics/{{topic.name}}">
+		<div id="landing">
 
-				<h3> {{topic.name}} </h3>
-				<p> {{topic.description}} </p>
+			<div class="row title-wrapper">
+				<img src="img/title.png" alt="LaunchList"/>
+				<!-- <h1 class="title">LaunchList</h1> -->
+			</div>
 
-			</ion-item>
+			<div class="row missionstatement-wrapper">
+				<img src="img/missionstatement.png" alt="Stop Searching. Start Finding."/>
+				<!-- <h2 class="mission">Stop Searching. Start Finding.</h2> -->
+			</div>
 
-		</ion-list>
+			<ion-list class="center-text">
+
+				<ion-item class="topic topic-{{topic.name}}" ng-click="loadTopic(topic.name)" ng-repeat="topic in topics" href="#/topics/{{topic.name}}">
+
+					<!-- TODO: icon should be loaded from topic object not hard coded  -->
+					<i class="topic-icon"></i>
+					<h3 class="topic-name">
+						<i alt="{{topic.name}}"></i>
+					</h3>
+					<p class="topic-description"> {{topic.description}} </p>
+
+				</ion-item>
+
+			</ion-list>
+
+			<div id="homepage-footer" class="row">
+				<div class="col center-text">
+					<a class="clickable" ng-click="login()" href="#">
+						<img src="img/loginbutton.png" alt="Login"/>
+            <!-- Login -->
+          </a>
+				</div>
+				<div class="col center-text">
+					<a class="clickable" ng-click="signup_modal.open()" href="#">
+						<img src="img/signupbutton.png" alt="Signup"/>
+            <!-- Signup -->
+          </a>
+				</div>
+			</div>
+
+		</div>
 	</ion-content>
 </ion-view>
