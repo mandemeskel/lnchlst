@@ -164,8 +164,49 @@ app.service( "databaseService", function() {
       return true;
     },
 
-    addLaunchlist: function( user_id, launchlist, onSuccess, onError ) {
+    addLaunchlist: function( launchlist, tags, onSuccess, onError ) {
 
+      var launchlist_key = this.addModel( launchlist.uid, launchlist, "launchlist", onSuccess, onError );
+
+      console.log( "databaseService.addLaunchlist, launchlist key:", launchlist_key );
+
+      if( tags != undefined )
+        this.addTag( launchlist_key, "launchlist", tags );
+
+    },
+
+    addModel: function( user_id, model, model_type, onSuccess, onError ) {
+      // get model url
+      var models_url = "/" + model_type + "s/";
+      var models = firebase.database().ref( models_url );
+      var new_model = models.push();
+
+      if( onSuccess == undefined ) {
+        onSuccess = function() {
+          console.log( "databaseService.addModel", true );
+        }
+      }
+
+      if( onError == undefined ) {
+        onError = function( error ) {
+          console.error( "databaseService.addModel", error );
+        }
+      }
+
+      // save the model
+      new_model.set( model ).then( function() {
+          console.log( "databaseService.addModel", true );
+        },
+        onError
+      );
+
+      // add model to user's model list
+      var model_url = models_url + new_model.key;
+      var user_models = firebase.database().ref(
+        "users/" + user_id + model_url );
+      user_models.set( true  ).then( onSuccess, onError );
+
+      return new_model.key;
     },
 
     addResource: function( uid, resource, tags, success, error ) {
@@ -309,6 +350,51 @@ app.service( "databaseService", function() {
 
       console.log( "databaseService.getLaunchlistsById", launchlists );
       return launchlists;
+
+    },
+
+    getUserList: function( user_id, model_ids, model_type, onSuccess, onError ) {
+
+      if( onSuccess == undefined ) {
+        onSuccess = function() {
+          console.log( "databaseService.getUserList", true );
+        }
+      }
+
+      if( onError == undefined ) {
+        onError = function( error ) {
+          console.error( "databaseService.getUserList", error );
+        }
+      }
+
+      var model_url = "/" + model_type + "s/"
+
+      for( let model_id in model_ids ) {
+        this.get(
+          model_url + model_id,
+          onSuccess,
+          onError
+        );
+      }
+    },
+
+    getUserLaunchlists: function( user_id, launchlist_ids, onSuccess, onError ) {
+
+      if( onSuccess == undefined ) {
+        onSuccess = function( snapshot ) {
+          if( DEVELOPING )
+            console.log( "databaseService.getUserLaunchlists", true, snapshot.key );
+        }
+      }
+
+      if( onError == undefined ) {
+        onError = function( error ) {
+          console.error( "databaseService.getUserLaunchlists", error );
+        }
+      }
+
+      // we get the actual launchlist object in onSuccess
+      this.getUserList( user_id, launchlist_ids, "launchlist", onSuccess, onError );
 
     },
 

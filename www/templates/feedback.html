@@ -1,0 +1,52 @@
+<ion-modal-view class="neon feedback_modal">
+
+
+  <ion-header-bar class="bar-transparent">
+    <div class="buttons">
+      <button class="button button-clear button-close ion-close" ng-click="feedback_modal.close()"></button>
+    </div>
+  </ion-header-bar>
+
+
+  <ion-content>
+
+    <div class="row">
+      <h1 class="title">Feedback</h1>
+    </div>
+
+    <form ng-submit="feedback_modal.submit()" class="">
+      <div class="list list-inset">
+
+        <label class="item item-input">
+          <input ng-model="feedback_modal.name" class="" type="text" placeholder="Name" required>
+        </label>
+
+        <label class="item item-input">
+          <input ng-model="feedback_modal.email" class="" type="email" placeholder="Email" required>
+        </label>
+
+        <label class="item item-input">
+          <textarea ng-model="feedback_modal.feedback" class="" placeholder="How can we make LaunchLIst better?" rows="5"></textarea>
+        </label>
+
+      </div>
+
+      <div class="row">
+
+        <div class="col">
+          <ion-checkbox ng-model="feedback_modal.subscribe">Subscribe for updates!</ion-checkbox>
+        </div>
+
+        <div class="col">
+          <button class="button button-quarter button-submit">
+            Submit
+          </button>
+        </div>
+
+      </div>
+
+    </form>
+
+  </ion-content>
+
+</ion-modal-view>

@@ -1,0 +1,97 @@
+{
+  "rules": {
+
+    "users": {
+
+    	// only admins can read and write to admins list
+    	"admins": {
+    		".read": "data.child( auth.uid ).exists()",
+    		".write": "data.child( auth.uid ).exists()"
+    	},
+
+    	"$user_id": {
+    		// must be logged in to read user profiles
+    		".read": "auth.uid != null",
+
+    		// users only can edit their own user profiles
+    		// unless they are admins i.e uid is in the admins list
+    		".write": "auth.uid === $user_id || root.child('users/admins/' + auth.uid ).exists()"
+    	}
+    },
+
+
+    "resources": {
+    	".read": true,
+
+    	"$resource_id": {
+    		// users only can edit their own resources
+    		// unless they are admins i.e uid is in the admins list
+    		// and must be logged in to create resources
+    		".write": "( auth.uid === data.child('uid').val() || auth.uid === newData.child('uid').val() || root.child('resource_admins/' + auth.uid ).exists() ) && auth.uid != null"
+    	}
+    },
+
+    // only admins can read and write to admins list
+    "resource_admins": {
+      ".read": "data.child( auth.uid ).exists()",
+      ".write": "data.child( auth.uid ).exists()"
+    },
+
+
+
+    "launchlists": {
+    	".read": true,
+
+    	"$launchlist_id": {
+    		// users only can edit their own launchlists
+    		// unless they are admins i.e uid is in the admins list
+    		// and must be logged in to create launchlists
+    		".write": "( auth.uid === data.child('uid').val() || auth.uid === newData.child('uid').val() || root.child('launchlist_admins/' + auth.uid ).exists() ) && auth.uid != null"
+    	}
+    },
+
+    // only admins can read and write to admins list
+    "launchlist_admins": {
+      ".read": "data.child( auth.uid ).exists()",
+      ".write": "data.child( auth.uid ).exists()"
+    },
+
+
+    "topics": {
+			".read": true,
+
+    	"$topic_id": {
+    		// only topic admins can create/edit topics
+    		// and must be logged in
+    		".write": "root.child('topic_admins/' + auth.uid ).exists() && auth.uid != null"
+    	}
+    },
+
+    // this lives outside of "topics" because we want to limit the read
+    // only admins within the list
+    // only admins can read and write to this admins list
+    "topic_admins": {
+      ".read": "data.child( auth.uid ).exists()",
+      ".write": "data.child( auth.uid ).exists()"
+    },
+
+
+  	"tags": {
+			".read": true,
+
+    	"$tag_id": {
+        // TODO: allow admins to delete tags
+    		// only allow logged in users to create and update tags
+    		// no one can delete tags
+    		".write": "newData.exists() && auth.uid != null"
+    	}
+    },
+
+    // only admins can read and write to this admins list
+    "tags_admins": {
+      ".read": "data.child( auth.uid ).exists()",
+      ".write": "data.child( auth.uid ).exists()"
+    }
+
+  }
+}

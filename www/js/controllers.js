@@ -74,6 +74,18 @@ angular.module('main.controllers', [])
     new Tag( "games/tools" )
   ];
 
+  $scope.launchlist_tags = [
+    new Tag( "sound design" ),
+    new Tag( "music theory" ),
+    new Tag( "mixing" ),
+    new Tag( "mastery" ),
+    new Tag( "software/DAWs" ),
+    new Tag( "hardware" ),
+    new Tag( "genre" ),
+    new Tag( "communities" ),
+    new Tag( "games/tools" )
+  ];
+
   $scope.tagClicked = function( tag ) {
     if( tag.selected )
       tag.css_class = tag.css_class.replace( " selected", "" );
@@ -301,6 +313,8 @@ angular.module('main.controllers', [])
           $scope.user.photoURL = user.photoURL;
           $scope.user.uid = user.uid;
           // $scope.user.providerData = user.providerData;
+          $scope.user.resources = [];
+          $scope.user.launchlists = [];
 
           // user is verfied and has loged in, update ui
           user.getToken().then( function(accessToken) {
@@ -328,6 +342,7 @@ angular.module('main.controllers', [])
 
               $scope.user.user = snapshot.val();
 
+              // get user's resources
               $scope.user.resources = [];
               let resources = $scope.user.user.resources;
               for( let resource_id in resources ) {
@@ -341,6 +356,32 @@ angular.module('main.controllers', [])
                   }
                 );
               }
+
+              // get user's launchlists
+              databaseService.getUserLaunchlists(
+                $scope.user.uid,
+                $scope.user.user.launchlists,
+                function( snapshot ) {
+                  if( DEVELOPING )
+                    console.log( "databaseService.getUserLaunchlists", true, snapshot.key );
+
+                  // get the launchlist
+                  let launchlist = snapshot.val();
+                  if( launchlist == null ) {
+                    console.log( "databaseService.getUserLaunchlists",
+                    " launchlist key found but no launchlist exists", snapshot.key )
+                    launchlist = {
+                      name: "bad launchlist",
+                      description: "bad launchlist",
+                      icon: "",
+                      tags: []
+                    }
+                  }
+                  // add launchlist's database key for later use
+                  launchlist.key = snapshot.key;
+                  $scope.user.launchlists.push( launchlist );
+                }
+              )
 
             }
 
@@ -409,6 +450,88 @@ angular.module('main.controllers', [])
     $scope.isLogedIn();
   });
 
+
+  // feedback modal
+  $scope.feedback_modal = {
+    name: "",
+    email: "",
+    feedback: "",
+    subscribe: "",
+    // we want to encourage multiple feedbacks
+    // so don't clear name, email, just feedback msg
+    clear: function() {
+      this.feedback = "";
+    },
+    submit: function() {
+      if( DEVELOPING )
+        console.log( "feedback_modal.submit", " feedback submited" );
+
+      this.clear();
+    }
+  };
+
+  // create feedback modal
+  $ionicModal.fromTemplateUrl('templates/feedback.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.feedback_modal.modal = modal;
+
+    $scope.feedback_modal.open = function() {
+      this.modal.show();
+    };
+
+    $scope.feedback_modal.close = function() {
+      this.modal.hide();
+    };
+
+    // DONE: remove after testing
+    // $scope.feedback_modal.open();
+
+  });
+
+
+  // feedback modal
+  $scope.signup_modal = {
+    username: "",
+    email: "",
+    pass1: "",
+    pass2: "",
+    // we want to encourage multiple feedbacks
+    // so don't clear name, email, just feedback msg
+    clear: function() {
+      this.feedback = "";
+    },
+    submit: function() {
+      if( DEVELOPING )
+        console.log( "signup_modal.submit", " feedback submited" );
+
+      this.clear();
+    }
+  };
+
+  // create feedback modal
+  $ionicModal.fromTemplateUrl('templates/signup.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.signup_modal.modal = modal;
+
+    $scope.signup_modal.open = function() {
+      this.modal.show();
+    };
+
+    $scope.signup_modal.close = function() {
+      this.modal.hide();
+    };
+
+    // DONE: remove after testing
+    // $scope.signup_modal.open();
+
+  });
+
+  $scope.search = function() {
+    if( DEVELOPING )
+      console.log( "searching..." );
+  }
 
 })
 
@@ -539,6 +662,167 @@ angular.module('main.controllers', [])
     update: function() {
     }
   }
+  $scope.launchlist = {
+    editing: false,
+    key: "",
+    name: "",
+    description: "",
+    icon: "",
+    tags: [],
+    resources: [],
+    list: [],
+    // the original unchanged entity
+    original: undefined,
+    list_object: function( order, type, value ) {
+      this.index = order;
+      this.type = type;
+      this.value = value;
+    },
+    clear: function() {
+      this.editing = false;
+      this.needs_save = false;
+      this.original = undefined;
+      this.key = "";
+      this.name = "";
+      this.description = "";
+      this.icon = "";
+      this.resources = [];
+      this.list = [];
+      // clear tags
+      $scope.deselectTags( $scope.launchlist_tags );
+    },
+    // returns object that is ready to be saved to db
+    get: function() {
+      var select_tags = $scope.getSelectedTags(
+        $scope.launchlist_tags
+      );
+      var tag_dict = {};
+
+      for( tag_val of select_tags )
+        tag_dict[ tag_val ] = true;
+
+      if( this.editing )
+        user_id = this.original.uid;
+      else
+        user_id = $scope.user.uid;
+
+      return {
+        name: this.name,
+        description: this.description,
+        icon: this.icon,
+        uid: user_id,
+        resources: this.resources,
+        list: this.list,
+        tags: tag_dict
+      };
+    },
+    // set properties to launchlist's properties
+    set: function( launchlist ) {
+      if( launchlist == undefined ) {
+        console.error( "launchlist.set, no launchlist passed" , launchlist );
+        return false;
+      }
+
+      this.original = launchlist;
+      this.editing = true;
+      this.needs_save = false;
+      this.key = launchlist.key;
+      this.name = launchlist.name;
+      this.description = launchlist.description;
+      this.icon = launchlist.icon;
+      this.resources = launchlist.resources;
+      this.list = launchlist.list;
+      selectTheseTags( launchlist.tags. $scope.launchlist_tags );
+    },
+    addResource: function( resource_id, order ) {
+      if( resource_id == undefined || resource_id == "" )
+        console.error( "launchlist.addResource, no resource id provided", resource_id );
+
+      // by default add resources to the start of the list to allow user easier access
+      if( order == undefined ) order = 0;
+
+      var list_object = new this.list_object(
+        order, "resource", resource_id
+      );
+
+      // add resource to list
+      this.list.push( list_object );
+
+      // add to resources list, the resources key is the key for easier readers i.e. easier to find a list in launchlist's resources list
+      this.resources[ resource_id ] = true;
+
+      // TODO: save now or later?
+      // this.save()
+      this.needs_save = true;
+
+    },
+    // // TODO: reanem this function?
+    // addToDb: function() {
+    //   // get the data to save to db
+    //   var obj = this.get();
+    //
+    // },
+    delete: function() {
+
+    },
+    save: function( force_save ) {
+      if( DEVELOPING )
+        console.log( "saving launchlist" );
+
+      // for now we will just overwrite the entire object in the db
+      var launchlist = this.get(),
+        tags = $scope.getSelectedTags( $scope.launchlist_tags );
+
+      // TODO: add launchlist editing
+      if( this.editing ) {
+        if( !this.needs_save && force_save !== true ) {
+          console.log( "launchlist.save, this.needs_save is false" );
+          return false;
+        }
+
+        this.needs_save = false;
+
+      // TODO: save
+      } else {
+
+        databaseService.addLaunchlist(
+          launchlist,
+          tags,
+          function() {
+            // update my launchlists list
+            $scope.user.launchlists.push( new_model );
+
+            // hide add resources
+            $scope.toggleAddLaunchlist();
+
+            // remove old data
+            $scope.launchlist.clear();
+
+            // tell angular to get off its lazy ass
+            $scope.$apply();
+          }
+        );
+
+      }
+    }
+  };
+
+  // TODO: check this
+  function toggler( toggle ) {
+    if( DEVELOPING )
+      console.log( "toggler: ", toggle );
+    return toggle = !toggle;
+  }
+
+  // selects tags that match selected tags
+  function selectTheseTags( selected_tags, tags_list ) {
+    for( selected_tag in selected_tags ) {
+      for( tag of tags_list ) {
+        if( tag.val == selected_tag )
+          tag.selectTag();
+      }
+    }
+  }
 
   // add new resource to database
   $scope.addResource = function() {
@@ -625,6 +909,10 @@ angular.module('main.controllers', [])
 
   $scope.checkShowDelete = function() {
     return $scope.resources_show_delete;
+  };
+
+  // toggles the resources list of the user
+  $scope.toggleMyResources = function() {
   };
 
   $scope.toggleAddLaunchlist = function() {

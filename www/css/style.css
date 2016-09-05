@@ -8,11 +8,19 @@ a.overlay {
 	z-index: 100;
 }
 
+div.center {
+	text-align: center;
+}
+
 .button-wide {
 	width: 100%;
 }
 .button-half {
   width: 50%;
+  margin: 0 auto;
+}
+.button-half {
+  width: 25%;
   margin: 0 auto;
 }
 
@@ -66,4 +74,262 @@ a.button.tag:hover {
 
 a.button.tag.selected {
 	background-color: #28a54c;
+}
+
+ion-view ion-content {
+	background-color: #bdc3c7;
+}
+
+.bar-transparent.bar.bar-header {
+  border: none;
+}
+
+/**
+ * Neon theme
+ * Colors:
+ * title, pink: #db0a5b
+ * box shadow, gray: #808386 or #5d5d5f
+ * input background, gray: #d2d7d3
+ * placeholder text, gray: #abb7b7
+ * button text color, gray: #abb7b7
+ * button background, gray: #5e6464
+ * button border, pink: #780532
+ */
+.neon {
+	font-size: 18px;
+}
+.neon span {
+	color: #a3a3a3;
+	font-weight: bold;
+}
+.neon.modal a {
+	background-color: transparent;
+	color: #db0a5b;
+	font-weight: bold;
+	transition: 1s;
+}
+.neon.modal a:hover {
+	color: white;
+	background-color: #3b0218;
+	box-shadow: #db0a5b 0 0 10px;
+}
+.neon.modal a:hover::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	color: white;
+}
+.neon.modal a:hover::-moz-placeholder { /* Firefox 19+ */
+	color: white;
+}
+.neon.modal a:hover:-ms-input-placeholder { /* IE 10+ */
+	color: white;
+}
+.neon.modal a:hover:-moz-placeholder { /* Firefox 18- */
+	color: white;
+}
+.neon.modal .row {
+	margin-bottom: 10px;
+}
+
+/**
+ * Neon theme - menu
+ */
+.neon.navmenu ion-content,
+.neon.navmenu ion-header-bar,
+.neon.navmenu .sidemenu-btns .item {
+	background-color: black;
+	border: none;
+}
+.neon.navmenu ion-header-bar {
+	/*min-height: 50px;*/
+}
+.neon.navmenu .sidemenu-btns .item {
+	color: white;
+	font-size: 20px;
+	font-weight: bold;
+	text-shadow: #db0a5b 1px 0px 1px, #db0a5b 0px -1px 0px, #db0a5b -1px 0px 0px, #db0a5b 0px 1px 0px;
+	padding-top: 28px;
+	padding-bottom: 28px;
+	border: 2px dashed #db0a5b;
+	border-right: none;
+	border-left: none;
+	text-align: center;
+	transition: 5s;
+}
+/* TODO: make navbar btns jucy */
+.neon.navmenu .sidemenu-btns .item:hover {
+	background-color: black;
+}
+.neon.navmenu .sidemenu-btns .item a {
+	background-color: transparent;
+	text-align: center;
+	padding: 0;
+}
+.neon #searchbar {
+	background-color: transparent;
+	border: 3px solid #db0a5b;
+	max-width: 200px;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding-left: 2px;
+}
+.neon #searchbar input {
+	padding-right: 0px;
+	color: white;
+}
+.neon #searchbar .icon {
+	padding-left: 0px;
+}
+
+/**
+ * Neon theme - modals
+ */
+.neon.modal {
+	background: transparent;
+	max-width: 600PX;
+}
+.neon.modal .bar-header {
+	background: transparent;
+}
+.neon.modal .title {
+	margin: 0 auto;
+	background-color: #db0a5b;
+	padding: 15px 25px;
+	font-size: 40px;
+	border-radius: 10px;
+	box-shadow: #5d5d5f 0px 5px 0;
+	color: white;
+	position: relative;
+	width: 100%;
+	text-align: center;
+}
+.neon.modal .title::before {
+	position: absolute;
+  content: '';
+  bottom: -50px;
+  left: 44%;
+  background: transparent;
+  border: transparent solid 25px;
+  border-top-color: #5d5d5f;
+}
+.neon.modal .title::after {
+	position: absolute;
+	content: '';
+	bottom: -40px;
+  left: 45%;
+	border: transparent solid 20px;
+	border-top-color: #db0a5b;
+}
+.neon.modal .button-close {
+	color: black;
+}
+.neon.modal form {
+	padding: 20px 15px;
+	background-color: black;
+	border-radius: 10px;
+	margin-top: 25px;
+	color: white;
+	box-shadow: #5d5d5f 0px 5px 0;
+	margin-bottom: 10px;
+}
+.neon.modal form .list-inset {
+	background: transparent;
+}
+.neon.modal form .list-inset .item-input {
+	background-color: #d2d7d3;
+	margin-top: 10px;
+	margin-bottom: 20px;
+	border-radius: 5px;
+}
+.neon.modal form textarea,
+.neon.modal form input  {
+	background: transparent;
+}
+.neon.modal form .button-submit {
+	color: #abb7b7;
+	background-color: #5e6464;
+	border: 3px solid #780532;
+	margin: 0 auto;
+	display: block;
+	font-size: 25px;
+	font-weight: bold;
+	transition: 1s;
+}
+.neon.modal form .button-submit:hover {
+	background-color: #780532;
+	border-color: #5e6464;
+}
+.neon.modal form .button-quarter {
+	min-width: 110px;
+}
+.neon.modal ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #abb7b7;
+	font-size: 20px;
+	font-weight: bold;
+}
+.neon.modal ::-moz-placeholder { /* Firefox 19+ */
+  color: #abb7b7;
+	font-size: 20px;
+	font-weight: bold;
+}
+.neon.modal :-ms-input-placeholder { /* IE 10+ */
+  color: #abb7b7;
+	font-size: 20px;
+	font-weight: bold;
+}
+.neon.modal :-moz-placeholder { /* Firefox 18- */
+  color: #abb7b7;
+	font-size: 20px;
+	font-weight: bold;
+}
+.neon.modal textarea::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	padding-top: 30px;
+}
+.neon.modal textarea::-moz-placeholder { /* Firefox 19+ */
+	padding-top: 30px;
+}
+.neon.modal textarea:-ms-input-placeholder { /* IE 10+ */
+	padding-top: 30px;
+}
+.neon.modal textarea:-moz-placeholder { /* Firefox 18- */
+	padding-top: 30px;
+}
+.neon.modal .item-checkbox {
+	border: none;
+	background: transparent;
+  color: #abb7b7;
+	cursor: pointer;
+}
+.neon.modal .checkbox input:checked:before,
+.neon.modal .checkbox input:checked + .checkbox-icon:before {
+  background-color: #5e6464;
+	border-width: 3px;
+  border-color: #780532;
+	transition: 0.5s;
+	border-radius: 5px;
+}
+.neon.mdoal .checkbox input:before,
+.neon.modal .checkbox-icon:before {
+	background-color: #5e6464;
+	border-radius: 5px;
+	transition: 0.5s;
+}
+.neon.modal .checkbox span {
+  border-bottom: 2px solid #6b344b;
+}
+/**
+ * Neon theme - icons
+ */
+.neon button.icon {
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 50px;
+	transition: 1s;
+}
+.neon  button.icon:hover {
+	transform: scale(1.2);
+}
+.neon  button.icon-fb {
+	background-image: url("/img/fb.png");
+}
+.neon  button.icon-twitter {
+	background-image: url("/img/twitter.png");
 }

@@ -1,4 +1,4 @@
-<ion-view view-title="Hey {{ user.displayName || 'Nina' | capitalize }}">
+<ion-view view-title="Welcome {{ user.displayName | capitalize }}">
 
 
 	<ion-nav-bar class="bar-balanced">
@@ -30,6 +30,8 @@
 					<h2 class="col-80 center">my resources</h2>
 
 		      <div class="buttons col">
+		        <!-- <button class="button button-balanced button-icon icon ion-chevron-up" ng-click="toggleMyResources()">
+		        </button> -->
 		        <button class="button button-balanced button-icon icon ion-plus-circled" ng-click="toggleAddResource()">
 		        </button>
 		      </div>
@@ -92,7 +94,7 @@
 
 
 		<!-- resources -->
-		<div id="my_Launchlists">
+		<div id="my_launchlists">
 
 			<ion-list show-delete="checkShowLaunchlistDelete()" can-swipe="true">
 
@@ -115,19 +117,25 @@
 
 
 				<ion-item ng-show="checkAddLaunchlist()">
-					<form ng-submit="addLaunchlist()" class="add_launchlist">
+					<form ng-submit="launchlist.save()" class="add_launchlist">
 						<div class="list list-inset">
 						  <label class="item item-input">
-						    <input class="launchlist-name" type="text" placeholder="Name" required>
+						    <input ng-model="launchlist.name" class="launchlist-name" type="text" placeholder="Name" required>
 						  </label>
 						  <label class="item item-input">
-						    <input class="launchlist-description" type="text" placeholder="Description">
+						    <input ng-model="launchlist.description" class="launchlist-description" type="text" placeholder="Description">
 						  </label>
 						  <label class="item item-input">
-						    <input class="launchlist-icon" type="url" placeholder="Icon" required>
+						    <input ng-model="launchlist.icon" class="launchlist-icon" type="url" placeholder="Icon">
 						  </label>
-					    <button class="button button-positive button-wide">
+						  <div class="button-bar tag-bar item">
+						    <a ng-repeat="tag in launchlist_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
+						  </div>
+					    <button class="button button-positive button-half">
 					      Submit
+					    </button>
+					    <button class="button button-half button-stable" ng-click="launchlist.clear()">
+					      Clear
 					    </button>
 						</div>
 					</form>

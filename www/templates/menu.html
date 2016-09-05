@@ -19,13 +19,17 @@
   </ion-side-menu-content>
 
 
-  <ion-side-menu side="right" expose-aside-when="large">
+  <ion-side-menu  class="neon navmenu" side="right" expose-aside-when="large">
 
-    <ion-header-bar class="bar-stable">
+    <ion-header-bar class="bar-dark">
 
-      <h1 class="title">Menu</h1>
+      <!-- <h1 class="title">Menu</h1> -->
 
       <div class="buttons">
+        <label id="searchbar" class="item item-input">
+          <input ng-keyup="" ng-click="search.search()" ng-model="search.query" type="search" placeholder="Search Launchlist">
+          <i class="icon ion-search placeholder-icon"></i>
+        </label>
 
         <a ng-hide="isHomePage()" class="button ion-home" ng-click="changeTab('home')" href="#/home"></a>
         <a ng-hide="user.logged_in" class="button ion-person" ng-click="login()"></a>
@@ -38,26 +42,28 @@
 
     <ion-content>
 
-      <ion-list>
-<!--         <ion-item menu-close ng-click="login()">
-          Login
-        </ion-item>
-        <ion-item menu-close href="#/home">
-          Home
-        </ion-item> -->
-        <ion-item ng-hide="showMyAccountBtn()" menu-close ng-click="changeTab('user')" href="#/user">
-          My Account
-        </ion-item>
-        <ion-item menu-close ng-click="changeTab('search')" href="#/search">
-          Search
-        </ion-item>
-        <ion-item menu-close ng-click="changeTab('browse')" href="#/browse">
-          Browse
-        </ion-item>
-        <ion-item menu-close ng-click="changeTab('topics')" href="#/topics">
-          Topics
-        </ion-item>
-      </ion-list>
+      <div class="sidemenu-btns">
+        <ion-list>
+          <ion-item ng-hide="showMyAccountBtn()" menu-close ng-click="changeTab('user')" href="#/user">
+            My Account
+          </ion-item>
+          <ion-item ng-click="signup_modal.open()">
+            Signup
+          </ion-item>
+          <ion-item ng-click="feedback_modal.open()">
+            Feedback
+          </ion-item>
+          <!-- <ion-item menu-close ng-click="changeTab('search')" href="#/search">
+            Search
+          </ion-item>
+          <ion-item menu-close ng-click="changeTab('browse')" href="#/browse">
+            Browse
+          </ion-item>
+          <ion-item menu-close ng-click="changeTab('topics')" href="#/topics">
+            Topics
+          </ion-item> -->
+        </ion-list>
+    </div>
 
     </ion-content>
 

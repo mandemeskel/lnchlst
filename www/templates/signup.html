@@ -1,0 +1,64 @@
+<ion-modal-view class="neon signup_modal">
+
+
+  <ion-header-bar class="bar-transparent">
+    <div class="buttons">
+      <button class="button button-clear button-close ion-close" ng-click="signup_modal.close()"></button>
+    </div>
+  </ion-header-bar>
+
+
+  <ion-content>
+
+    <div class="row">
+      <h1 class="title">Launcher Signup</h1>
+    </div>
+
+    <form ng-submit="signup_modal.submit()" class="">
+      <div class="list list-inset">
+
+        <label class="item item-input">
+          <input ng-model="signup_modal.username" class="" type="text" placeholder="Name" required>
+        </label>
+
+        <label class="item item-input">
+          <input ng-model="signup_modal.email" class="" type="email" placeholder="Email" required>
+        </label>
+
+        <label class="item item-input">
+          <input ng-model="signup_modal.pass1" class="" type="password" placeholder="Password" required>
+        </label>
+
+        <label class="item item-input">
+          <input ng-model="signup_modal.pass2" class="" type="password" placeholder="Confirm Password" required>
+        </label>
+
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <span>Already a Launcher?</span>
+          <a ng-click="login()" href="#">Log in</a>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col center">
+          <button class="button button-icon icon icon-twitter" href="#"></button>
+          <button class="button button-icon icon icon-fb" href="#"></button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <button class="button button-quarter button-submit">
+            Sign Up
+          </button>
+        </div>
+      </div>
+
+    </form>
+
+  </ion-content>
+
+</ion-modal-view>
