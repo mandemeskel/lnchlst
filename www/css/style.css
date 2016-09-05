@@ -110,6 +110,13 @@ ion-view ion-content {
  * button text color, gray: #abb7b7
  * button background, gray: #5e6464
  * button border, pink: #780532
+ *                   websafe - old colors
+ Strong pink:      #cc0066 - #db0a5b
+ Dark gray:        #999999 - #808386
+ Light gray:       #cccccc - #d2d7d3
+ Desaturated cyan: #99cccc - #abb7b7
+ Very dark gray:   #666666 - #5e6464
+ Very dark pink:   #660033 - #780532
  */
 .neon {
 	font-size: 18px;
@@ -148,10 +155,14 @@ ion-view ion-content {
 /**
  * Neon theme - menu
  */
+.neon.menu {
+	/*background-image: url(/img/starybackground.png);*/
+	background-color: black;
+}
 .neon.navmenu ion-content,
 .neon.navmenu ion-header-bar,
 .neon.navmenu .sidemenu-btns .item {
-	background-color: black;
+	background-color: transparent;
 	border: none;
 }
 .neon.navmenu ion-header-bar {
@@ -225,6 +236,12 @@ ion-view ion-content {
 	background-color: transparent;
 	border-color: transparent;
 }
+/*.neon#homepage ion-nav-bar,
+.neon#homepage ion-nav-bar .nav-bar-block,
+.neon#homepage ion-header-bar,
+.neon#homepage ion-header-bar .header-item {
+	border-bottom-color: black;
+}*/
 .neon#homepage .back-button {
 	color: white;
 }
@@ -366,7 +383,11 @@ ion-view ion-content {
 	border-top-color: #db0a5b;
 }
 .neon.modal .button-close {
-	color: black;
+	color: white;
+	background-color: #5d5d5f;
+	border: 2px solid #780532;
+	border-radius: 50%;
+	width: 35px;
 }
 .neon.modal form {
 	padding: 20px 15px;
