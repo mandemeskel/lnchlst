@@ -1,43 +1,54 @@
-<ion-view view-title="Launchlist">
+<ion-view view-title="LaunchList">
 
-  <ion-nav-bar class="bar-balanced">
+  <ion-nav-bar class="bar-pink">
 
-    <ion-nav-back-button> </ion-nav-back-button> 
+    <ion-nav-back-button> </ion-nav-back-button>
 
-    <ion-nav-buttons side="right"> 
-      <button class="button button-icon button-clear ion-navicon" menu-toggle="right"></button> 
+    <ion-nav-buttons side="right">
+      <button class="button button-icon button-black ion-navicon" menu-toggle="right"></button>
     </ion-nav-buttons>
-    
+
   </ion-nav-bar>
 
 
   <ion-content>
-    
+
     <h1 class="center">{{ launchlist.name || 'Topic' | capitalize }}</h1>
     <p>{{ launchlist.description }}</p>
 
-	<ion-list>
+	<ion-list class="launchlist">
 
-      <ion-item ng-click="" ng-repeat="obj in launchlist.list_objects | orderBy:'order'" class="{{ obj.type }} item">
+      <ion-item ng-click="" ng-repeat="obj in launchlist.list_objects | orderBy:'order'" class="{{ obj.type }} item checklist">
 
         <div ng-switch="obj.type">
 
-          <div ng-switch-when="heading" class="heading">
-            <h3> {{ obj.item.value }} </h3>
+          <div ng-switch-when="heading" class="heading-wrapper">
+            <h3 class="heading"> {{ obj.item.value }} </h3>
           </div>
-          
+
           <div ng-switch-when="launchlist" class="child-list">
 
-            <h3> {{ obj.item.name }} </h3>
-            <p> {{ obj.item.description }} </p>
-            <a class="overlay" href="#/launchlists/{{obj.id}}" target="_blank"></a>
+            <ion-checkbox ng-model="isChecked">
+
+              <h3> {{ obj.item.name }} </h3>
+              <p> {{ obj.item.description }} </p>
+
+              <a class="overlay" href="#/launchlists/{{obj.id}}" target="_blank"></a>
+
+            </ion-checkbox>
+
 
           </div>
-          
+
           <div ng-switch-when="resource" class="resource">
 
-            <h3> {{ obj.item.name }} </h3>
-            <p> {{ obj.item.description }} </p>
+            <ion-checkbox ng-model="isChecked">
+
+              <h3> {{ obj.item.name }} </h3>
+              <p> {{ obj.item.description }} </p>
+
+            </ion-checkbox>
+
             <a class="overlay" href="{{obj.item.link}}" target="_blank"></a>
 
           </div>

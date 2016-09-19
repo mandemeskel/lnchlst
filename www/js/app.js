@@ -209,9 +209,10 @@ app.service( "databaseService", function() {
       return new_model.key;
     },
 
-    addResource: function( uid, resource, tags, success, error ) {
+    addResource: function( resource, success, error ) {
       // add resource to database
-      var resources = firebase.database().ref( "/resources/" );
+      var resources = firebase.database().ref( "/resources/" ),
+        uid = resource.uid;
       var new_resource = resources.push();
 
       // if( DEVELOPING )
@@ -237,9 +238,9 @@ app.service( "databaseService", function() {
       var resource_url = "/resources/" + new_resource.key;
       var user_resources = firebase.database().ref(
         "users/" + uid + resource_url );
-      user_resources.set( true  ).then( success, error );
+      user_resources.set( true ).then( success, error );
 
-      this.addTag( new_resource.key, "resource", tags );
+      this.addTag( new_resource.key, "resource", resource.tags );
 
     },
 
@@ -254,13 +255,26 @@ app.service( "databaseService", function() {
       var obj_url = "/" + obj_type + "s";
       var ref_url = obj_url + "/" + obj_id + "/tags/";
       var obj_id_url =  obj_url + "/" + obj_id;
-      for( tag of tags ) {
+      // TODO: this is not being called
+      for( atag of tags ) {
+        console.log( atag );
+
         // add tag to entity
-        this.addToList( ref_url + tag, onSuccess );
+        this.addToList( ref_url + atag, onSuccess );
 
         // update tag with id of entity
-        this.addToList( "/tags/" + tag + obj_id_url );
+        this.addToList( "/tags/" + atag + obj_id_url );
       }
+      // for( var n=0; n < tags.length; n++) {
+      //   var atag = tags[n];
+      //
+      //   // add tag to entity
+      //   this.addToList( ref_url + atag, onSuccess );
+      //
+      //   // update tag with id of entity
+      //   this.addToList( "/tags/" + atag + obj_id_url );
+      // }
+
     },
 
     init: function( $scope ) {

@@ -26,6 +26,10 @@ div.center {
   width: 25%;
   margin: 0 auto;
 }
+.button-black {
+	color: black;
+	border-color: black;
+}
 
 h1.center, h2.center, h3.center {
 	text-align: center;
@@ -46,14 +50,6 @@ h1.center, h2.center, h3.center {
   font-weight: bold;
 }
 
-.resource.item {
-  background-color: rgba(17, 193, 243, 0.13);
-}
-
-.launchlist.item {
-  background-color: rgba(255, 201, 0, 0.11);
-}
-
 
 div.tag-bar {
     display: block;
@@ -72,7 +68,8 @@ a.button.tag {
 }
 
 a.button.tag:hover {
-	transform: scale( 1.1 );
+	/*transform: scale( 1.1 );*/
+	font-size: 18px;
 }
 
 a.button.tag.selected {
@@ -98,7 +95,23 @@ ion-view ion-content {
 .bar-black .menu-button  {
 	color: white;
 }
+.bar.bar-pink {
+  border-color: #cc0066;
+  background-color: #cc0066;
+  background-image: linear-gradient(0deg, #28a54c, #28a54c 50%, transparent 50%);
+  color: #fff;
+}
+.bar-pink .button.back-button,
+.bar-pink .button.back-button span {
+	color: #fff;
+}
 
+.pull-left {
+	float: left;
+}
+.pull-right {
+	float: right;
+}
 
 /**
  * Neon theme
@@ -124,6 +137,10 @@ ion-view ion-content {
 .neon span {
 	color: #a3a3a3;
 	font-weight: bold;
+}
+.neon input.ng-invalid {
+	color: red;
+	border-bottom: 2px solid red;
 }
 .neon.modal a {
 	background-color: transparent;
@@ -155,6 +172,18 @@ ion-view ion-content {
 /**
  * Neon theme - menu
  */
+/** ionic overrides **/
+.neon input:checked:before,
+.neon .checkbox input:checked + .checkbox-icon:before {
+  background: black;
+	/*border: none;*/
+  border-color: #000000;
+}
+/*.neon .checkbox-icon {
+	transition: 0.5s;
+}*/
+
+/** sidemenu **/
 .neon.menu {
 	/*background-image: url(/img/starybackground.png);*/
 	background-color: black;
@@ -205,6 +234,75 @@ ion-view ion-content {
 .neon #searchbar .icon {
 	padding-left: 0px;
 }
+
+
+/**
+ * Neon theme - Sub Pages
+ */
+.neon h1, h2, h3, h4 {
+	font-family: serif;
+}
+.neon p {
+	font-family: serif;
+}
+.neon ion-view ion-content {
+	background-color: black;
+	color: white;
+}
+.neon .button-stable {
+	border: 1px solid black;
+}
+.neon .checklist.item .heading {
+	padding: 16px;
+}
+.neon .checklist.item {
+	padding-left: 0;
+	padding-right: 0;
+	padding: 0;
+	margin: 0;
+}
+.neon .checklist label.item.item-checkbox {
+	margin: 0;
+	border: none;
+}
+.neon .checklist a.overlay {
+	left: 60px;
+}
+.neon .launchlists .item,
+.neon .resources .item,
+.neon .topics .item,
+.neon .launchlist .item {
+	/*background-color: #ccc;*/
+	transition: 0.5;
+	border-color: black;
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+/*.neon .launchlists .item a,
+.neon .resources .item a,
+.neon .topics .item a,
+.neon .launchlist .item a {
+	background-color: transparent;
+}*/
+.neon .item.heading {
+	background-color: #666666;
+	background: linear-gradient(180deg, #cc0066, purple);
+}
+.neon .item.heading .heading {
+	color: white;
+}
+.neon .item.resource {
+  background-color: linear-gradient(pink, purple);
+}
+.neon .item.launchlist {
+  background-color: #e8b3ce;
+}
+.neon .item.resource:hover,
+.neon .item.topic:hover,
+.neon .item.launchlist:hover {
+	background-color: rgba(255, 255, 255, 0.8);
+}
+
 
 /**
  * Neon theme - home
