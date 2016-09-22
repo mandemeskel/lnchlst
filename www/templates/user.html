@@ -39,7 +39,7 @@
 		    </ion-item>
 
 
-				<ion-item ng-show="checkAddResource()">
+				<ion-item ng-show="add_resource">
 					<form ng-submit="addResource()" class="add_resource">
 
 						<div class="list list-inset">
@@ -107,7 +107,7 @@
 		</div>
 
 
-		<!-- resources -->
+		<!-- launchlists -->
 		<div id="my_launchlists">
 
 			<ion-list show-delete="checkShowLaunchlistDelete()" can-swipe="true" class="launchlists">
@@ -133,7 +133,7 @@
 				<ion-item ng-show="checkAddLaunchlist()">
 					<form ng-submit="launchlist.save()" class="add_launchlist">
 						<div class="list list-inset">
-							
+
 						  <label class="item item-input">
 						    <input ng-model="launchlist.name" class="launchlist-name" type="text" placeholder="Name" required>
 						  </label>
