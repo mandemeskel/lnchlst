@@ -89,8 +89,8 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
     url: '/launchlists/:launchlist_id',
     views: {
       'menuContent': {
-        templateUrl: 'templates/launchlists.html',
-        controller: 'LaunchlistsCtrl'
+        templateUrl: 'templates/launchlist.html',
+        controller: 'LaunchlistCtrl'
       }
     }
   })

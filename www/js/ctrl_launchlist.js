@@ -1,4 +1,4 @@
-app.controller('LaunchlistsCtrl', function($scope, $stateParams, databaseService) {
+app.controller('LaunchlistCtrl', function($scope, $stateParams, databaseService) {
   // $scope.tab = "launchlists";
   if( DEVELOPING )
     console.log( $stateParams );

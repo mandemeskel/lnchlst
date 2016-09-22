@@ -261,6 +261,9 @@ ion-view ion-content {
 	padding: 0;
 	margin: 0;
 }
+.neon .checklist.item .item {
+	background-color: transparent;
+}
 .neon .checklist label.item.item-checkbox {
 	margin: 0;
 	border: none;
