@@ -192,7 +192,7 @@ app.controller('UserCtrl', function($scope, databaseService) {
       this.needs_save = true;
 
     },
-    // // TODO: reanem this function?
+    // // TODO: rename this function?
     // addToDb: function() {
     //   // get the data to save to db
     //   var obj = this.get();

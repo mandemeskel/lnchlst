@@ -444,6 +444,36 @@ ion-view ion-content {
 	}
 }
 
+
+/**
+ * Neon theme - user page
+ */
+#userpage {
+}
+#userpage .scroll {
+	/*width: 100%;*/
+}
+#userpage #my_resources div.list,
+#userpage #my_launchlists div.list {
+	position: relative;
+	/*overflow: scroll;*/
+	/*height: 500px;*/
+	padding-top: 82px;
+}
+#userpage .row.item.item-header {
+	/*width: auto;*/
+	padding: 10px;
+}
+#userpage .item.item-header {
+	padding: 10px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100.3%;
+	z-index: 3;
+}
+
+
 /**
  * Neon theme - modals
  */

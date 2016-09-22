@@ -1,3 +1,4 @@
+<div id="userpage">
 <ion-view view-title="Welcome {{ user.displayName | capitalize }}">
 
 
@@ -14,22 +15,23 @@
 
 	<ion-content>
 
-		<!-- resources -->
-		<div id="my_resources">
+	<div class="row responsive-sm">
 
+		<!-- resources -->
+		<div id="my_resources" class="col col-50">
 			<ion-list show-delete="checkShowDelete()" can-swipe="true" class="resources">
 
 				<ion-item class="item-positive row item-header">
 
 <!-- TODO: Causes the list item to not recieve any input including this button, you can't toggle it off -->
-		      <div class="buttons col">
+		      <div class="buttons col col-10">
 		        <button class="button button-assertive button-icon icon ion-ios-minus-outline"
 		          ng-click="toggleShowDelete()"></button>
 		      </div>
 
-					<h2 class="col-80 center">my resources</h2>
+					<h2 class="col col-80 center">my resources</h2>
 
-		      <div class="buttons col">
+		      <div class="buttons col col-10">
 		        <!-- <button class="button button-balanced button-icon icon ion-chevron-up" ng-click="toggleMyResources()">
 		        </button> -->
 		        <button class="button button-balanced button-icon icon ion-plus-circled" ng-click="toggleAddResource()">
@@ -101,28 +103,26 @@
 			    </ion-delete-button>
 
 				</ion-item>
-
 			</ion-list>
-
 		</div>
 
 
 		<!-- launchlists -->
-		<div id="my_launchlists">
+		<div id="my_launchlists" class="col col-50">
 
 			<ion-list show-delete="checkShowLaunchlistDelete()" can-swipe="true" class="launchlists">
 
 				<ion-item class="item-positive row item-header">
 
 <!-- TODO: Causes the list item to not recieve any input including this button, you can't toggle it off -->
-		      <div class="buttons col">
+		      <div class="buttons col col-10">
 		        <button class="button button-assertive button-icon icon ion-ios-minus-outline"
 		          ng-click="toggleShowLaunchlistDelete()"></button>
 		      </div>
 
-					<h2 class="col-80 center">my launchlists</h2>
+					<h2 class="col col-80 center">my launchlists</h2>
 
-		      <div class="buttons col">
+		      <div class="buttons col col-10">
 		        <button class="button button-balanced button-icon icon ion-plus-circled" ng-click="toggleAddLaunchlist()">
 		        </button>
 		      </div>
@@ -189,6 +189,9 @@
 
 		</div>
 
+	</div>
+
 	</ion-content>
 
 </ion-view>
+</div>
