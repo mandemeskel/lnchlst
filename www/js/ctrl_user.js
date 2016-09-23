@@ -226,7 +226,7 @@ app.controller('UserCtrl', function($scope, databaseService) {
           tags,
           function() {
             // update my launchlists list
-            $scope.user.launchlists.push( new_model );
+            $scope.user.launchlists.push( $scope.launchlist.get() );
 
             // hide add resources
             $scope.toggleAddLaunchlist();
