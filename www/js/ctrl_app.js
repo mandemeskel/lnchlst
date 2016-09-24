@@ -1,4 +1,11 @@
 app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading, $state, databaseService) {
+  var DEVELOPING = true;
+  
+  // since angular does not want to do dirty checking and calling
+  // $scope.$apply is not safe, we use a function to update ui
+  $scope.toggleOn = function( abool ) {
+    return abool;
+  }
 
   // create dummy topics
   var music = new Topic( "music" ),

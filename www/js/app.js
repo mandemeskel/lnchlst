@@ -15,10 +15,19 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
       cordova.plugins.Keyboard.disableScroll(true);
 
     }
+    
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+    
+    var ITEM_TYPES = {
+      community: "C",
+      heading: "H",
+      launchlist: "L",
+      resource: "R",
+    };
+    
   });
 })
 

@@ -54,8 +54,9 @@ h1.center, h2.center, h3.center {
 div.tag-bar {
     display: block;
 }
-
-a.button.tag {
+/* .button-bar > .button:first-child a.button.tag,
+.button-bar > .button:first-child a.button.tag, */
+.button-bar a.button.tag {
 	font-size: 12px;
 	padding: 1px 5px;
 	display: block;
@@ -68,8 +69,9 @@ a.button.tag {
 }
 
 a.button.tag:hover {
-	/*transform: scale( 1.1 );*/
-	font-size: 18px;
+	transform: scale( 0.9 );
+	background-color: #cc0066;
+/* 	font-size: 12px; */
 }
 
 a.button.tag.selected {
@@ -453,8 +455,8 @@ ion-view ion-content {
 #userpage .scroll {
 	/*width: 100%;*/
 }
-#userpage #my_resources div.list,
-#userpage #my_launchlists div.list {
+#my_resources > ion-list > div.list,
+#my_launchlists > ion-list > div.list {
 	position: relative;
 	/*overflow: scroll;*/
 	/*height: 500px;*/
@@ -471,6 +473,23 @@ ion-view ion-content {
 	left: 0;
 	width: 100.3%;
 	z-index: 3;
+}
+/*#my_resources a.overlay {*/
+/*  left: -50px;*/
+/*}*/
+#my_resources button.add_resource {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  min-width: 50px;
+  transition: 0.5s;
+  z-index: 100;
+}
+#my_resources button.add_resource:hover {
+  transform: scale(0.9);   
+  /*background-color: pink;*/
+  right: -10px;
 }
 
 

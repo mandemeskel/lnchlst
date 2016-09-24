@@ -1,4 +1,13 @@
-app.controller('UserCtrl', function($scope, databaseService) {
+app.controller('UserCtrl', function($scope, databaseService, tagService) {
+  var DEVELOPING = true;
+  // Item types
+  $scope.ITEM_TYPES = {
+    community: "C",
+    heading: "H",
+    launchlist: "L",
+    resource: "R",
+  };
+  
   $scope.tab = "user";
   $scope.resources_show_delete = false;
   $scope.add_resource = false;
@@ -22,16 +31,16 @@ app.controller('UserCtrl', function($scope, databaseService) {
       this.link = "";
       // this.tags = [];
       // TODO: also clear tags
-      $scope.deselectTags( $scope.resource_tags );
-      $scope.deselectTags( $scope.content_types );
+      tagService.deselectTags( tagService.resource_tags );
+      tagService.deselectTags( tagService.content_types );
     },
 
     // returns a pure resource ready to be saved to db
     get: function() {
-      var selected_tags = $scope.getSelectedTags( $scope.resource_tags ),
+      var selected_tags = tagService.getSelectedTags( tagService.resource_tags ),
         tag_dict = {};
 
-      $scope.getSelectedTags( $scope.content_types )
+      tagService.getSelectedTags( tagService.content_types )
       .forEach(
         function( tag ) {
           selected_tags.push( tag );
@@ -41,7 +50,7 @@ app.controller('UserCtrl', function($scope, databaseService) {
       if( DEVELOPING )
         console.log( selected_tags );
 
-      for( tag_val of selected_tags )
+      for( var tag_val of selected_tags )
         tag_dict[ tag_val ] = true;
 
       if( DEVELOPING )
@@ -71,21 +80,25 @@ app.controller('UserCtrl', function($scope, databaseService) {
       this.link = resource.link;
 
       // TODO: add a way to edit tags
-      for( resource_tag in resource.tags ) {
+      for( var resource_tag in resource.tags ) {
+        
         console.log( resource_tag );
+        
         // TODO: create tag dictionary to avoid this loadTopic...tags_dict[ resource.tag ].selectTag()
-        for( tag of $scope.resource_tags ) {
+        for( var tag of $scope.resource_tags ) {
           if( tag.val == resource_tag ) {
             tag.selectTag();
             // this.tags.push( tag );
           }
         }
-        for( tag of $scope.content_types ) {
+        
+        for( var tag of tagService.content_types ) {
           if( tag.val == resource_tag ) {
             tag.selectTag();
             // this.tags.push( tag );
           }
         }
+        
       }
     },
 
@@ -96,26 +109,111 @@ app.controller('UserCtrl', function($scope, databaseService) {
     // updates resource
     update: function() {
     }
-  }
+  };
+
+  function Item( name, creator) {
+    this.name = name;
+    this.creator = creator;
+    this.description;
+    this.link;
+    this.tags = [];
+    // this.content_types;
+    
+    this.key;
+    this.type;
+    this.date_created;
+    this.date_updated;
+    
+    // clears item of all data
+    this.clear = function() {
+      this.name = undefined;
+      this.creator = undefined;
+      this.description = undefined;
+      this.link = undefined;
+      this.tags = undefined;
+      // this.content_types = undefined;
+      
+      this.key = undefined;
+      this.type = undefined;
+      this.date_created = undefined;
+      this.date_updated = undefined;
+    };
+    
+    // create new item
+    this.create = function( name, creator ) {
+      return new Item( name, creator );
+    };
+    
+    // delete item
+    this.delete = function() {
+      this.clear();
+    };
+      
+    // edit item
+    this.edit = function( new_values ) {
+      // TODO
+    };
+    
+    // get item info
+    this.get = function() {
+      // TODO
+    };
+      
+    // set item info
+    this.set = function( item ) {
+      this.name = item.name;
+      this.description = item.description;
+      // TODO: add item type specific code
+    };
+  
+    // get item as dict
+    this.toDict = function() {
+      // TODO
+    };
+    
+  };
+  
 
   $scope.launchlist = {
+    // are we edditng a launchlist
     editing: false,
+    // whether or not the editor is editing this launchlist or something else
+    editing_self: false,
+    // display the intructions on how to edit launchlists
+    show_help: true,
+    // dispaly editor for editing lanunchlist/creating new items
+    show_editor: true,
+    //prompt to show to users when using editor
+    editor_msg: "",
+    // firebase unqiue for this launchlist
     key: "",
     name: "",
     description: "",
     icon: "",
     tags: [],
     resources: [],
+    headings: [],
+    launchlists: [],
     list: [],
+    new_items: [],
     // the original unchanged entity
     original: undefined,
-    list_object: function( order, type, value ) {
+    // new item to add to launchlist
+    new_item: new Item(),
+    
+    // the object that gets saved into the launchlist's list
+    list_object: function( name, order, type, key ) {
+      this.name = name;
+      this.description;
       this.index = order;
       this.type = type;
-      this.value = value;
+      this.key = key;
     },
+    
+    // clear launchlist of all data
     clear: function() {
       this.editing = false;
+      this.editing_self = false;
       this.needs_save = false;
       this.original = undefined;
       this.key = "";
@@ -123,20 +221,30 @@ app.controller('UserCtrl', function($scope, databaseService) {
       this.description = "";
       this.icon = "";
       this.resources = [];
+      this.headings = [];
+      this.launchlists = [];
       this.list = [];
+      this.new_items = [];
       // clear tags
-      $scope.deselectTags( $scope.launchlist_tags );
+      tagService.deselectTags( tagService.launchlist_tags );
     },
+    
+    // clear editor item
+    clearEditor: function() {
+      this.editing_self = false;
+      this.new_item = new Item();
+    },
+    
     // returns object that is ready to be saved to db
     get: function() {
-      var select_tags = $scope.getSelectedTags(
-        $scope.launchlist_tags
+      var select_tags = tagService.getSelectedTags(
+        tagService.launchlist_tags
       );
-      var tag_dict = {};
+      var tag_dict = {}, user_id;
 
-      for( tag_val of select_tags )
+      for( var tag_val of select_tags )
         tag_dict[ tag_val ] = true;
-
+    
       if( this.editing )
         user_id = this.original.uid;
       else
@@ -152,6 +260,7 @@ app.controller('UserCtrl', function($scope, databaseService) {
         tags: tag_dict
       };
     },
+    
     // set properties to launchlist's properties
     set: function( launchlist ) {
       if( launchlist == undefined ) {
@@ -166,10 +275,28 @@ app.controller('UserCtrl', function($scope, databaseService) {
       this.name = launchlist.name;
       this.description = launchlist.description;
       this.icon = launchlist.icon;
-      this.resources = launchlist.resources;
-      this.list = launchlist.list;
-      selectTheseTags( launchlist.tags. $scope.launchlist_tags );
+      
+      if( launchlist.headings !== undefined )
+        this.headings = launchlist.headings;
+        
+      if( launchlist.launchlists !== undefined )
+        this.launchlists = launchlist.launchlists;
+      
+      if( launchlist.resources !== undefined )
+        this.resources = launchlist.resources;
+        
+      if( launchlist.list !== undefined )
+        this.list = launchlist.list;
+      
+      this.new_item = new Item();
+      
+      this.new_item.set( this );
+        
+      // TODO: launchlist specific tags?
+      selectTheseTags( launchlist.tags, tagService.launchlist_tags );
     },
+    
+    // TODO
     addResource: function( resource_id, order ) {
       if( resource_id == undefined || resource_id == "" )
         console.error( "launchlist.addResource, no resource id provided", resource_id );
@@ -192,32 +319,79 @@ app.controller('UserCtrl', function($scope, databaseService) {
       this.needs_save = true;
 
     },
-    // // TODO: rename this function?
-    // addToDb: function() {
-    //   // get the data to save to db
-    //   var obj = this.get();
-    //
-    // },
+    
+    // adds item to launchlist's list at the top of the list for easier
+    // editing
+    addItem: function( item, type ) {
+      
+      var list_obj = new this.list_object();
+      
+      if( type === undefined )
+        type = item.type;
+      
+      if( type == $scope.ITEM_TYPES.resource ) {
+        
+        // item = $scope.user.resources[ item ];
+        
+        if( item.key )
+          list_obj.key = item.key;
+      
+      }
+      
+      list_obj.name = item.name;
+      
+      if( item.description )
+        list_obj.description = item.description;
+      
+      // TODO: should be zero
+      list_obj.order = this.list.length;
+      
+      // keep track of what items have been added
+      this.new_items.push( list_obj ); 
+      
+      // add list_obj to front of array ( index, delete_count, item )
+      this.list.splice( 0, 0, list_obj );
+      
+      this.editor_msg = "item added";
+      
+    },
+    
+    // move item to a new place in the list
+    moveItem: function( usurper, from, to ) {
+      var victim = this.list[ to ];
+      this.list.splice( to, 1, usurper );
+      this.list.splice( from, 1, victim );
+    },
+
+    // TODO
     delete: function() {
 
     },
+    
+    // TODO
     save: function( force_save ) {
       if( DEVELOPING )
         console.log( "saving launchlist" );
 
       // for now we will just overwrite the entire object in the db
       var launchlist = this.get(),
-        tags = $scope.getSelectedTags( $scope.launchlist_tags );
+        tags = tagService.getSelectedTags( tagService.launchlist_tags );
 
       // TODO: add launchlist editing
       if( this.editing ) {
+        
         if( !this.needs_save && force_save !== true ) {
           console.log( "launchlist.save, this.needs_save is false" );
           return false;
         }
 
-        this.needs_save = false;
-
+        this.needs_save = true;
+        
+        databaseService.saveItem( launchlist, $scope.ITEM_TYPES.launchlist );
+        
+        // this.editing = false;
+        this.clear();
+        
       // TODO: save
       } else {
 
@@ -240,20 +414,82 @@ app.controller('UserCtrl', function($scope, databaseService) {
         );
 
       }
+    },
+  
+    // controls if launchlist edit section
+    // returns launchlist.editing, because fucking angular
+    isEditing: function() {
+      return this.editing;
+    },
+    
+    // returns what bool or what this.new_item is
+    newItemIs: function( type ) {
+      if( type )
+        return type == this.new_item.type;
+      
+      return this.new_item.type;
+    },
+    
+    // controls the launchlist edit editor form
+    // returns launchlist.show_editor
+    showEditor: function() {
+      return this.show_editor;
+    },
+    
+    // submit handler for editor
+    onEditorSubmit: function() {
+      
+      if( !this.editing_self ) {
+      
+        this.addItem( this.new_item, this.new_item.type );
+        this.editor_msg = "Saved!";
+        this.new_item.clear();
+        
+      }
+      
+      // TODO: remove this? save on editor close???
+      this.save()
+      
+    },
+    
+    // changes the type of item the editor is creating/editing
+    toggleAddItem: function( type ) {
+      
+      switch( type ) {
+        
+        case $scope.ITEM_TYPES.heading:
+        case $scope.ITEM_TYPES.launchlist:
+        case $scope.ITEM_TYPES.resource:
+          var item = new Item();
+          item.type = type;
+        break;
+        
+        default:
+          this.show_editor = false;
+        return false;
+      }
+      
+      this.new_item = item;
+      if( !this.show_editor ) this.show_editor = true;
+      if( this.editing_self ) this.editing_self = false;
     }
+  
+    
   };
 
   // TODO: check this
   function toggler( toggle ) {
     if( DEVELOPING )
       console.log( "toggler: ", toggle );
-    return toggle = !toggle;
+    
+    toggle = !toggle;
+    return toggle;
   }
 
   // selects tags that match selected tags
   function selectTheseTags( selected_tags, tags_list ) {
-    for( selected_tag in selected_tags ) {
-      for( tag of tags_list ) {
+    for( var selected_tag in selected_tags ) {
+      for( var tag of tags_list ) {
         if( tag.val == selected_tag )
           tag.selectTag();
       }
@@ -268,7 +504,7 @@ app.controller('UserCtrl', function($scope, databaseService) {
       var new_resource = $scope.resource.get(),
         old_resource = $scope.resource.original;
 
-      console.log( "new resource", new_rource );
+      console.log( "new resource", new_resource );
 
       // TODO: update resource in resources list
       // TODO: clear edit resource ui, remove it, and notify user
@@ -398,7 +634,34 @@ app.controller('UserCtrl', function($scope, databaseService) {
 
   };
 
-  $scope.editLaunchlist = function() {
+  /**
+   * Display LaunchList edit UI
+   */
+  $scope.editLaunchlist = function( launchlist ) {
+    if( DEVELOPING )
+      console.log( "editLaunchlist: ", launchlist  );
+      
+    $scope.launchlist.clear();
+    $scope.launchlist.set( launchlist );
+    $scope.launchlist.editing = true;
+    $scope.launchlist.editing_self = true;
+
+  };
+  
+  /**
+  * Drag drop hangler
+  */
+  $scope.dragResource = function( resource_index ) {
+    if( DEVELOPING )
+      console.log( "dragResource: ", resource_index );
+  };
+  
+  /**
+   * Drag drop hangler
+   */
+  $scope.releaseResource = function( resource_index ) {
+    if( DEVELOPING )
+      console.log( "releaseResource: ", resource_index );
   };
 
 });

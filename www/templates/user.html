@@ -15,181 +15,354 @@
 
 	<ion-content>
 
-	<div class="row responsive-sm">
+  	<div class="row responsive-sm">
+  
+  		<!-- resources -->
+  		<div id="my_resources" class="col col-50">
+  			<ion-list show-delete="checkShowDelete()" can-swipe="true" class="resources">
+  
+          <!-- header -->
+  				<ion-item class="item-positive row item-header">
+  
+  <!-- TODO: Causes the list item to not recieve any input including this button, you can't toggle it off -->
+  		      <div class="buttons col col-10">
+  		        <button class="button button-assertive button-icon icon ion-ios-minus-outline"
+  		          ng-click="toggleShowDelete()"></button>
+  		      </div>
+  
+  					<h2 class="col col-80 center">my resources</h2>
+  
+  		      <div class="buttons col col-10">
+  		        <!-- <button class="button button-balanced button-icon icon ion-chevron-up" ng-click="toggleMyResources()">
+  		        </button> -->
+  		        <button class="button button-balanced button-icon icon ion-plus-circled" ng-click="toggleAddResource()">
+  		        </button>
+  		      </div>
+  
+  		    </ion-item>
+  
+          <!--  Create new resource form -->
+  				<ion-item ng-show="add_resource">
+  					<form ng-submit="addResource()" class="add_resource">
+  
+  						<div class="list list-inset">
+  
+  							<label class="item item-input">
+  						    <input ng-model="resource.name" class="resource-name" type="text" placeholder="Name" required>
+  						  </label>
+  
+  							<label class="item item-input">
+  						    <input ng-model="resource.description" class="resource-description" type="text" placeholder="Description">
+  						  </label>
+  
+  							<label class="item item-input">
+  						    <input ng-model="resource.link" class="resource-link" type="url" placeholder="Link" required>
+  						  </label>
+  
+  							<div class="button-bar tag-bar item">
+  						  	<h4>Content Type</h4>
+  							  <a ng-repeat="tag in content_types" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
+  						  </div>
+  
+  							<div class="button-bar tag-bar item">
+  						  	<h4>Tags</h4>
+  							  <a ng-repeat="tag in resource_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
+  						  </div>
+  
+  							<button class="button button-half button-positive pull-left">
+  					      Submit
+  					    </button>
+  
+  							<button class="button button-half button-stable pull-right" ng-click="resource.clear()">
+  					      Clear
+  					    </button>
+  
+  						</div>
+  					</form>
+  				</ion-item>
+  
+          <!-- List of user's resources-->
+  				<ion-item ng-repeat="resource in user.resources" on-drag="dragResource( $index )" on-release="releaseResource( $index )">
 
-		<!-- resources -->
-		<div id="my_resources" class="col col-50">
-			<ion-list show-delete="checkShowDelete()" can-swipe="true" class="resources">
+  					<h3> {{resource.name}} </h3>
+  					<p> {{resource.description}} </p>
+  
+  					<ion-option-button class="button-positive"
+  	                       ng-click="shareResource( resource )">
+  			      Share
+  			    </ion-option-button>
+  			    
+  			    <ion-option-button class="button-info"
+  			                       ng-click="editResource( resource )">
+  			      Edit
+  			    </ion-option-button>
+  			    
+  			    <ion-option-button class="button-assertive"
+  			                       ng-click="deleteResource( resource )">
+  			      Delete
+  			    </ion-option-button>
+  			    
+  			    <ion-delete-button class="ion-minus-circled"
+  			                       ng-click="deleteResource( $index )">
+  			    </ion-delete-button>
+  			                
+            <a class="overlay" href="{{ resource.link }}" target="_blank"> </a>
+            
+  			    <button ng-show="launchlist.isEditing()" ng-click="launchlist.addItem( resource, ITEM_TYPES.resource )" class="add_resource button button-icon ion-chevron-right" ng-click="launchlist.addItem( $index, ITEM_TYPES.resource )">
+            </button>
+  
+  				</ion-item>
+  				
+  			</ion-list>
+  		</div>
+  
+  
+  		<!-- launchlists -->
+  		<div id="my_launchlists" class="col col-50" ng-hide="launchlist.isEditing()">
+  
+  			<ion-list show-delete="checkShowLaunchlistDelete()" can-swipe="true" class="launchlists">
+  
+  				<ion-item class="item-positive row item-header">
+  
+            <!-- TODO: Causes the list item to not recieve any input including this button, you can't toggle it off -->
+  		      <div class="buttons col col-10">
+  		        <button class="button button-assertive button-icon icon ion-ios-minus-outline"
+  		          ng-click="toggleShowLaunchlistDelete()"></button>
+  		      </div>
+  
+  					<h2 class="col col-80 center">my launchlists</h2>
+  
+  		      <div class="buttons col col-10">
+  		        <button class="button button-balanced button-icon icon ion-plus-circled" ng-click="toggleAddLaunchlist()">
+  		        </button>
+  		      </div>
+  
+  		    </ion-item>
+  
+  
+  				<ion-item ng-show="checkAddLaunchlist()">
+  					<form ng-submit="launchlist.save()" class="add_launchlist">
+  						<div class="list list-inset">
+  
+  						  <label class="item item-input">
+  						    <input ng-model="launchlist.name" class="launchlist-name" type="text" placeholder="Name" required>
+  						  </label>
+  
+  						  <label class="item item-input">
+  						    <input ng-model="launchlist.description" class="launchlist-description" type="text" placeholder="Description">
+  						  </label>
+  
+  						  <label class="item item-input">
+  						    <input ng-model="launchlist.icon" class="launchlist-icon" type="url" placeholder="Icon">
+  						  </label>
+  
+  						  <div class="button-bar tag-bar item">
+  						    <a ng-repeat="tag in launchlist_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
+  						  </div>
+  
+  					    <button class="button button-positive button-half">
+  					      Submit
+  					    </button>
+  
+  					    <button class="button button-half button-stable" ng-click="launchlist.clear()">
+  					      Clear
+  					    </button>
+  						</div>
+  					</form>
+  				</ion-item>
+  
+  
+  				<ion-item ng-repeat="launchlist in user.launchlists" ng-click="loadLaunchlistList( launchlist )" href="#/launchlis/{{ launchlist.link }}" target="_blank">
+  
+  					<h3> {{launchlist.name}} </h3>
+  					<p> {{launchlist.description}} </p>
+  
+  					<ion-option-button class="button-positive"
+  	                       ng-click="shareLaunchlist(launchlist)">
+  			      Share
+  			    </ion-option-button>
+  			    <ion-option-button class="button-info"
+  			                       ng-click="editLaunchlist(launchlist)">
+  			      Edit
+  			    </ion-option-button>
+  			    <ion-option-button class="button-assertive"
+  			                       ng-click="editLaunchlist(launchlist)">
+  			      Delete
+  			    </ion-option-button>
+  			    <ion-delete-button class="ion-minus-circled"
+  			                       ng-click="deleteLaunchlist( $index )">
+  			    </ion-delete-button>
+  
+  				</ion-item>
+  
+  			</ion-list>
+  
+  		</div>
 
-				<ion-item class="item-positive row item-header">
+    
+      <!-- edit launchlist -->
+      <div id="edit_launchlist" class="col col-50" ng-show="launchlist.isEditing()">
+          
+          <!-- the launchlist editor controls -->
+          <ion-list can-swipe="true" class="launchlists">
+            
+            <!-- Header -->
+            <ion-item class="item-positive row item-header">
 
-<!-- TODO: Causes the list item to not recieve any input including this button, you can't toggle it off -->
-		      <div class="buttons col col-10">
-		        <button class="button button-assertive button-icon icon ion-ios-minus-outline"
-		          ng-click="toggleShowDelete()"></button>
-		      </div>
+              <div class="buttons col col-10">
+                <button class="button button-balanced button-icon icon ion-android-done"
+                  ng-click="launchlist.save()"></button>
+              </div>
 
-					<h2 class="col col-80 center">my resources</h2>
+              <div class="col col-40">
+                    <h2 class="center">{{launchlist.name}}</h2>
+              </div>
 
-		      <div class="buttons col col-10">
-		        <!-- <button class="button button-balanced button-icon icon ion-chevron-up" ng-click="toggleMyResources()">
-		        </button> -->
-		        <button class="button button-balanced button-icon icon ion-plus-circled" ng-click="toggleAddResource()">
-		        </button>
-		      </div>
+              <div class="buttons col col-50">
+              
+                <button class="button button-balanced button-small" ng-click="launchlist.toggleAddItem( ITEM_TYPES.heading )">add heading
+                </button>
+                
+                <button class="button button-balanced button-small"
+                  ng-click="launchlist.toggleAddItem( ITEM_TYPES.launchlist )">add launchlist</button>
 
-		    </ion-item>
+                <button class="button button-balanced button-small"
+                  ng-click="launchlist.toggleAddItem( ITEM_TYPES.resource )">add resource</button>
 
+              </div>
 
-				<ion-item ng-show="add_resource">
-					<form ng-submit="addResource()" class="add_resource">
+            </ion-item>
+            
+            <!-- Instructions on how to use edit a launchlist -->
+            <ion-item ng-show="launchlist.show_help">
+              
+              <div class="buttons col col-10">
+                <button class="button button-assertive button-icon icon ios-ios-minus-outline"
+                  ng-click="launchlist.show_help = false"></button>
+              </div>
+              
+              <div class="col col-90">
+                <p>
+                  Somebody save me!!!
+                </p>
+              </div>
+              
+            </ion-item>
+  
+            <!-- 
+              Editor to edit launchlist itself or to create new resources/headings/launchlist 
+              that will automatically be inserted into this launchlist 
+            -->
+            <ion-item>
+              <form ng-show="launchlist.showEditor()" ng-submit="launchlist.onEditorSubmit()" class="add_launchlist">
+                <div class="list list-inset">
+                  
+                  <h4 ng-model="launchlist.editor_msg"></h4>
 
-						<div class="list list-inset">
+                  <label class="item item-input">
+                    <input ng-model="launchlist.new_item.name" class="launchlist-name" type="text" placeholder="Name" required>
+                  </label>
 
-							<label class="item item-input">
-						    <input ng-model="resource.name" class="resource-name" type="text" placeholder="Name" required>
-						  </label>
+                  <label class="item item-input">
+                    <input ng-model="launchlist.new_item.description" class="launchlist-description" type="text" placeholder="Description">
+                  </label>
+                  
+                  <!-- UI specific to launchlists -->
+                  <div ng-show="launchlist.newItemIs( ITEM_TYPES.launchlist )">
+                    <label class="item item-input">
+                      <input ng-model="launchlist.new_item.icon" class="launchlist-icon" type="url" placeholder="Icon">
+                    </label>
 
-							<label class="item item-input">
-						    <input ng-model="resource.description" class="resource-description" type="text" placeholder="Description">
-						  </label>
+                    <!-- TODO: set up topics that the launchlist will be saved under  -->
+                    <div class="button-bar tag-bar item">
+                      <h4>Topics</h4>
+                      <a ng-repeat="topic in topics" data-val="{{ topic.display_name }}" ng-click="tagClicked( tag )" ng-class="topic.css_class" href>{{ topic.display_name }}</a>
+                    </div>
 
-							<label class="item item-input">
-						    <input ng-model="resource.link" class="resource-link" type="url" placeholder="Link" required>
-						  </label>
+                    <div class="button-bar tag-bar item">
+                      <h4>Tags</h4>
+                      <a ng-repeat="tag in launchlist_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
+                    </div>
+                  </div>
+                  
+                  <!-- UI specific to resources -->
+                  <div ng-show="launchlist.newItemIs( ITEM_TYPES.resource )">
+                    <label class="item item-input">
+                      <input ng-model="resource.link" class="resource-link" type="url" placeholder="Link" ngRequired="launchlist.newItemIs( ITEM_TYPES.resource )">
+                    </label>
+      
+                    <div class="button-bar tag-bar item">
+                      <h4>Content Type</h4>
+                      <a ng-repeat="tag in content_types" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
+                    </div>
+      
+                    <div class="button-bar tag-bar item">
+                      <h4>Tags</h4>
+                      <a ng-repeat="tag in resource_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
+                    </div>
+                  </div>
+              
+                  <button class="button button-positive button-half">
+                    Submit
+                  </button>
+                  
+                  <button class="button button-half button-stable" ng-click="launchlist.show_editor=false">
+                    Close
+                  </button>
 
-							<div class="button-bar tag-bar item">
-						  	<h4>Content Type</h4>
-							  <a ng-repeat="tag in content_types" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
-						  </div>
+                  <button class="button button-half button-stable" ng-click="launchlist.clearEditor()">
+                    Clear
+                  </button>
+                  
+                </div>
+              </form>
+              
+              <button class="button button-half button-stable" ng-click="launchlist.show_editor=true" ng-hide="launchlist.showEditor()">
+                Show Editor
+              </button>
+            </ion-item>
+            
+          </ion-list>
+          
+          <!-- the actual list in the launchlist -->
+          <ion-list show-delete="checkShowLaunchlistDelete()" show-reorder="true" can-swipe="true" class="launchlists">
+          
+            <!-- The existing items in the launchlist -->
+            <ion-item ng-repeat="item in launchlist.list track by $index" ng-click="">
+              <div class="{{item.type}}">
+                
+                <h3> {{item.name}} </h3>
+                <p> {{item.description}} </p>
+                
+                <ion-reorder-button class="ion-navicon"
+                on-reorder="launchlist.moveItem( item, $fromIndex, $toIndex )">
+        
+                <ion-option-button class="button-positive"
+                               ng-click="launchlist.shareItem( $index )">
+                  Share
+                </ion-option-button>
+                
+                <ion-option-button class="button-info"
+                                   ng-click="launchlist.editItem( $index )">
+                  Edit
+                </ion-option-button>
+                
+                <ion-option-button class="button-assertive"
+                                   ng-click="launchlist.deleteItem( $index )">
+                  Delete
+                </ion-option-button>
+                
+                <ion-delete-button class="ion-minus-circled"
+                                   ng-click="launchlist.deleteItem( $index )">
+                </ion-delete-button>
+      
+              </div>
+            </ion-item>
+              
+          </ion-list>
+      </div>
 
-							<div class="button-bar tag-bar item">
-						  	<h4>Tags</h4>
-							  <a ng-repeat="tag in resource_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
-						  </div>
-
-							<button class="button button-half button-positive pull-left">
-					      Submit
-					    </button>
-
-							<button class="button button-half button-stable pull-right" ng-click="resource.clear()">
-					      Clear
-					    </button>
-
-						</div>
-					</form>
-				</ion-item>
-
-
-				<ion-item ng-repeat="resource in user.resources" href="{{ resource.link }}" target="_blank">
-
-					<h3> {{resource.name}} </h3>
-					<p> {{resource.description}} </p>
-
-					<ion-option-button class="button-positive"
-	                       ng-click="shareResource(resource)">
-			      Share
-			    </ion-option-button>
-			    <ion-option-button class="button-info"
-			                       ng-click="editResource(resource)">
-			      Edit
-			    </ion-option-button>
-			    <ion-option-button class="button-assertive"
-			                       ng-click="deleteResource(resource)">
-			      Delete
-			    </ion-option-button>
-			    <ion-delete-button class="ion-minus-circled"
-			                       ng-click="deleteResource( $index )">
-			    </ion-delete-button>
-
-				</ion-item>
-			</ion-list>
-		</div>
-
-
-		<!-- launchlists -->
-		<div id="my_launchlists" class="col col-50">
-
-			<ion-list show-delete="checkShowLaunchlistDelete()" can-swipe="true" class="launchlists">
-
-				<ion-item class="item-positive row item-header">
-
-<!-- TODO: Causes the list item to not recieve any input including this button, you can't toggle it off -->
-		      <div class="buttons col col-10">
-		        <button class="button button-assertive button-icon icon ion-ios-minus-outline"
-		          ng-click="toggleShowLaunchlistDelete()"></button>
-		      </div>
-
-					<h2 class="col col-80 center">my launchlists</h2>
-
-		      <div class="buttons col col-10">
-		        <button class="button button-balanced button-icon icon ion-plus-circled" ng-click="toggleAddLaunchlist()">
-		        </button>
-		      </div>
-
-		    </ion-item>
-
-
-				<ion-item ng-show="checkAddLaunchlist()">
-					<form ng-submit="launchlist.save()" class="add_launchlist">
-						<div class="list list-inset">
-
-						  <label class="item item-input">
-						    <input ng-model="launchlist.name" class="launchlist-name" type="text" placeholder="Name" required>
-						  </label>
-
-						  <label class="item item-input">
-						    <input ng-model="launchlist.description" class="launchlist-description" type="text" placeholder="Description">
-						  </label>
-
-						  <label class="item item-input">
-						    <input ng-model="launchlist.icon" class="launchlist-icon" type="url" placeholder="Icon">
-						  </label>
-
-						  <div class="button-bar tag-bar item">
-						    <a ng-repeat="tag in launchlist_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
-						  </div>
-
-					    <button class="button button-positive button-half">
-					      Submit
-					    </button>
-
-					    <button class="button button-half button-stable" ng-click="launchlist.clear()">
-					      Clear
-					    </button>
-						</div>
-					</form>
-				</ion-item>
-
-
-				<ion-item ng-repeat="launchlist in user.launchlists" ng-click="loadLaunchlistList( launchlist )" href="#/launchlis/{{ launchlist.link }}" target="_blank">
-
-					<h3> {{launchlist.name}} </h3>
-					<p> {{launchlist.description}} </p>
-
-					<ion-option-button class="button-positive"
-	                       ng-click="shareLaunchlist(launchlist)">
-			      Share
-			    </ion-option-button>
-			    <ion-option-button class="button-info"
-			                       ng-click="editLaunchlist(launchlist)">
-			      Edit
-			    </ion-option-button>
-			    <ion-option-button class="button-assertive"
-			                       ng-click="editLaunchlist(launchlist)">
-			      Delete
-			    </ion-option-button>
-			    <ion-delete-button class="ion-minus-circled"
-			                       ng-click="deleteLaunchlist( $index )">
-			    </ion-delete-button>
-
-				</ion-item>
-
-			</ion-list>
-
-		</div>
-
-	</div>
+	  </div>
 
 	</ion-content>
 

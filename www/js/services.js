@@ -3,9 +3,13 @@
  * @param  {None}
  * @return {Object} object with methods to access db
  */
-app.service( "databaseService", function() {
+var databaseService = function() {
   function pushSuccess() {
     console.log( "databaseService.pushSuccess",  true );
+  }
+
+  function dbSuccess() {
+    console.log( "databaseService.dbSuccess", true );
   }
 
   function dbError( error ) {
@@ -404,11 +408,178 @@ app.service( "databaseService", function() {
       // TODO: compare entities, old vs new, before sending, full update or partial depending on this comparison
       this.put( ref_url, new_entity, apromise, onError );
       return true;
+    },
+
+    // add item to databse
+    saveItem: function( item, type ) {
+      if( DEVELOPING )
+        console.log( "databaseService.saveItem: ", item, type );
+
+      switch( type ) {
+        case ITEM_TYPES.heading:
+          server_resource = this.saveHeading( item );
+        break;
+
+        case ITEM_TYPES.launchlist:
+          server_resource = this.getItem( item );
+        break;
+
+        case ITEM_TYPES.resource:
+          server_resource = this.getItem( item );
+        break;
+
+        default:
+        return false;
+      }
+
+      pushToDb()
+
+    },
+
+    loadLaunchlit: function( launchlist_id, onYes, onNo ) {
+      // TODO: load and return launchlist
+    },
+
+    saveHeading: function( item, launchlist_key ) {
+      var heading = {
+        index: item.order,
+        value: item.name,
+        description: item.description,
+        type: "heading"
+      };
+
+      var url = "launchlists/" + launchlist_key + "/"
+      this.firebasePush( url, heading, dbSuccess, dbError );
+    },
+
+    firebaseSet: function( url, item, onYes, onNo ) {
+      firebase.database().ref( url ).set( item ).then( onYes, onNo );
+    },
+
+    // returns a key of item saved at that list list url
+    firebasePush: function( list_url, item, onYes, onNo ) {
+      var new_item = firebase.database().ref( list_url ).push();
+
+      new_item.set( item ).then( onYes, onNo );
+
+      return new_item;
     }
 
   } );
 
+};
+app.service( "databaseService", databaseService );
+
+
+/**
+* Handles tags for different Item types
+* @type {Service}
+*/
+app.service( "tagService", function() {
+
+  // Tag types
+  var TAG_TYPES = {
+    content: "content",
+    tag: "tag",
+    topic: "topic"
+  };
+
+  function Tag( name, tag_type ) {
+    this.display_name = name;
+
+    if( tag_type == undefined )
+      this.tag_type = TAG_TYPES.tag;
+
+    this.val = name.replace( " ", "-" ).replace( "/", "-" );
+    this.css_class = "button tag tag-" + this.val;
+    this.selected = false;
+
+    this.deselectTag = function() {
+      this.selected = false;
+      this.css_class = this.css_class.replace( " selected" );
+    };
+
+    this.selectTag = function() {
+      this.selected = true;
+      this.css_class = this.css_class + " selected";
+    };
+  };
+
+  var resource_tags = [
+    new Tag( "sound design" ),
+    new Tag( "music theory" ),
+    new Tag( "mixing" ),
+    new Tag( "mastery" ),
+    new Tag( "software/DAWs" ),
+    new Tag( "hardware" ),
+    new Tag( "genre" ),
+    new Tag( "communities" ),
+    new Tag( "games/tools" )
+  ];
+
+  var launchlist_tags = [
+    new Tag( "sound design" ),
+    new Tag( "music theory" ),
+    new Tag( "mixing" ),
+    new Tag( "mastery" ),
+    new Tag( "software/DAWs" ),
+    new Tag( "hardware" ),
+    new Tag( "genre" ),
+    new Tag( "communities" ),
+    new Tag( "games/tools" )
+  ];
+
+  var content_types = [
+    new Tag( "audio", "content_type" ),
+    new Tag( "ebook", "content_type" ),
+    new Tag( "image", "content_type" ),
+    new Tag( "text", "content_type" ),
+    new Tag( "video", "content_type" )
+  ];
+
+
+  return {
+    // content types for resources
+    content_types: content_types,
+
+    // launchlist specfic tags
+    launchlist_tags: launchlist_tags,
+
+    // resource specfic tags
+    resource_tags: resource_tags,
+
+    // tag on click on handler
+    tagClicked: function( tag ) {
+      if( tag.selected )
+        tag.css_class = tag.css_class.replace( " selected", "" );
+      else
+        tag.css_class = tag.css_class + " selected";
+      tag.selected = !tag.selected;
+    },
+
+    // return list of selected tags
+    getSelectedTags: function( tags, get_display_name ) {
+      var selected = [];
+
+      for( var tag of tags ) {
+        if( !tag.selected ) continue;
+        if( get_display_name )
+          selected.push( tag.display_name );
+        else
+          selected.push( tag.val );
+      }
+      return selected;
+    },
+
+    // deselect all tags
+    deselectTags: function( tags ) {
+      if( tags == undefined ) tags = resource_tags;
+      for( var tag of tags )
+        tag.deselectTag();
+    }
+  }
 } );
+
 
 /**
  * Creates loading notification modal/pop-up that blocks
