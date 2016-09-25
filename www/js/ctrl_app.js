@@ -88,10 +88,18 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
 
       // headings don't need to be retrieved from db
       // they come with the launchlist.list
-      if( item.type == "heading" ) {
-
+      if( item.type == ITEM_TYPES.heading ) {
+        
+        // TODO: switch to item.order when all the dummy launchlists are gone
+        // the order of the item in the launchlist
+        var order;
+        if( item.index === undefined ) 
+          order = item.order;
+        else
+          order = item.index;
+          
         $scope.launchlist.list_objects.push(
-          { type: item.type, item: item, order: item.index }
+          { type: item.type, item: item, order: order }
         );
         continue;
 
@@ -114,13 +122,13 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
           };
 
       // make the urls to fetch entities from database
-      if( item.type == "launchlist" ) {
+      if( item.type == ITEM_TYPES.launchlist ) {
 
-        ref_url = "/launchlists/" + item.value;
+        ref_url = "/launchlists/" + n;
 
-      } else if( item.type == "resource" ) {
+      } else if( item.type == ITEM_TYPES.resource ) {
 
-        ref_url = "/resources/" + item.value;
+        ref_url = "/resources/" + n;
 
       } else {
 
