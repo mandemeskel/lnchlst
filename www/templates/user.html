@@ -160,6 +160,11 @@
   						    <a ng-repeat="tag in launchlist_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
   						  </div>
   
+                <div class="button-bar tag-bar item">
+                  <h4>Topics</h4>
+                  <a ng-repeat="tag in topic_tags" data-val="{{ tag.display_name }}" ng-click="tagClicked( tag )" ng-class="tag.css_class" href>{{ tag.display_name }}</a>
+                </div>
+  
   					    <button class="button button-positive button-half">
   					      Submit
   					    </button>
@@ -328,7 +333,7 @@
           <ion-list show-delete="checkShowLaunchlistDelete()" show-reorder="true" can-swipe="true" class="launchlists">
           
             <!-- The existing items in the launchlist -->
-            <ion-item ng-repeat="item in launchlist.list track by $index" ng-click="">
+            <ion-item ng-repeat="item in launchlist.list | orderBy: 'order' track by $index" ng-click="">
               <div class="{{item.type}}">
                 
                 <h3> {{item.value}} </h3>

@@ -189,6 +189,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     // user is
     uid: "",
     tags: [],
+    topics: [],
     resources: [],
     headings: [],
     launchlists: [],
@@ -222,10 +223,13 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       this.resources = [];
       this.headings = [];
       this.launchlists = [];
+      this.tags = [];
+      this.topics = [];
       this.list = [];
       this.new_items = [];
       // clear tags
       tagService.deselectTags( tagService.launchlist_tags );
+      tagService.deselectTags( tagService.topic_tags );
     },
     
     // clear editor item
@@ -236,14 +240,20 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     
     // returns object that is ready to be saved to db
     get: function() {
-      var select_tags = tagService.getSelectedTags(
+      var selected_tags = tagService.getSelectedTags(
         tagService.launchlist_tags
       );
-      var tag_dict = {}, user_id;
+      var selected_topics = tagService.getSelectedTags(
+        tagService.topic_tags
+      );
+      var tag_dict = {}, topics_dict = {}, user_id;
 
-      for( var tag_val of select_tags )
+      for( var tag_val of selected_tags )
         tag_dict[ tag_val ] = true;
     
+      for( var topic of selected_topics )
+        topics_dict[ topic ] = true;
+      
       if( this.editing )
         user_id = this.original.uid;
       else
@@ -256,7 +266,8 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
         uid: user_id,
         resources: this.resources,
         list: this.list,
-        tags: tag_dict
+        tags: tag_dict,
+        topics: topics_dict
       };
     },
     
@@ -293,6 +304,9 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
         
       if( launchlist.list !== undefined )
         this.list = launchlist.list;
+      
+      if( launchlist.topics !== undefined )
+        this.topics = launchlist.topics;
       
       this.new_item = new Item();
       
@@ -370,6 +384,8 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       
     },
     
+    // TODO: this does not work when using orderBY: 'order' filter in ngRepeat
+    // TODO: save new order list items
     // move item to a new place in the list
     moveItem: function( usurper, from, to ) {
       var victim = this.list[ to ];
@@ -402,8 +418,6 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
 
         // i dont even know why???
         this.needs_save = true;
-        // TODO: tags are NOT saved
-        this.tags = tagService.getSelectedTags( tagService.launchlist_tags );
         // get databaseServicer input from launchlist editor form
         if( this.editing_self ) {
           
@@ -423,8 +437,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       } else {
         
         var launchlist = this.get();
-        launchlist.tags = tagService.getSelectedTags( tagService.launchlist_tags );
-
+        
         databaseService.addLaunchlist(
           launchlist,
           function() {

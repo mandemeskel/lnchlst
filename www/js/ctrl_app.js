@@ -1,4 +1,4 @@
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading, $state, databaseService) {
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading, $state, databaseService, tagService) {
   var DEVELOPING = true;
   
   // since angular does not want to do dirty checking and calling
@@ -45,64 +45,21 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
     };
   };
 
-  $scope.resource_tags = [
-    new Tag( "sound design" ),
-    new Tag( "music theory" ),
-    new Tag( "mixing" ),
-    new Tag( "mastery" ),
-    new Tag( "software/DAWs" ),
-    new Tag( "hardware" ),
-    new Tag( "genre" ),
-    new Tag( "communities" ),
-    new Tag( "games/tools" )
-  ];
+  $scope.resource_tags = tagService.resource_tags;
 
-  $scope.launchlist_tags = [
-    new Tag( "sound design" ),
-    new Tag( "music theory" ),
-    new Tag( "mixing" ),
-    new Tag( "mastery" ),
-    new Tag( "software/DAWs" ),
-    new Tag( "hardware" ),
-    new Tag( "genre" ),
-    new Tag( "communities" ),
-    new Tag( "games/tools" )
-  ];
+  $scope.launchlist_tags = tagService.launchlist_tags;
 
-  $scope.content_types = [
-    new Tag( "audio", "content_type" ),
-    new Tag( "ebook", "content_type" ),
-    new Tag( "image", "content_type" ),
-    new Tag( "text", "content_type" ),
-    new Tag( "video", "content_type" )
-  ];
+  $scope.content_types = tagService.content_types;
+  
+  // TODO: make this dynamic
+  // list of topics that a launchlist can be saved under
+  $scope.topic_tags = tagService.topic_tags;
 
-  $scope.tagClicked = function( tag ) {
-    if( tag.selected )
-      tag.css_class = tag.css_class.replace( " selected", "" );
-    else
-      tag.css_class = tag.css_class + " selected";
-    tag.selected = !tag.selected;
-  };
-
-  $scope.getSelectedTags = function( tags, get_display_name ) {
-    var selected = [];
-
-    for( tag of tags ) {
-      if( !tag.selected ) continue;
-      if( get_display_name )
-        selected.push( tag.display_name );
-      else
-        selected.push( tag.val );
-    }
-    return selected;
-  };
-
-  $scope.deselectTags = function( tags ) {
-    if( tags == undefined ) tags = $scope.resource_tags;
-    for( tag of tags )
-      tag.deselectTag();
-  };
+  $scope.tagClicked = tagService.tagClicked;
+  
+  $scope.getSelectedTags = tagService.getSelectedTags;
+  
+  $scope.deselectTags = tagService.deselectTags;
 
   $scope.isHomePage = function() {
     // return $scope.tab == "home";

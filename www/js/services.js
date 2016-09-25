@@ -56,6 +56,9 @@ var databaseService = function() {
       if( launchlist.tags !== undefined )
         this.addTag( launchlist_key, "launchlist", launchlist.tags );
         
+      if( launchlist.topics !== undefined )
+        this.addToTopics( launchlist_key, launchlist.topics );
+        
       return launchlist_key;
 
     },
@@ -134,7 +137,7 @@ var databaseService = function() {
 
     // TODO: add tags to resources/launchlists
     addTag: function( obj_id, obj_type, tags, onSuccess, onError ) {
-      if( onSuccess == undefined ) {
+      if( onSuccess === undefined ) {
         onSuccess = function() {
           console.log( "Added tag" );
         }
@@ -144,7 +147,7 @@ var databaseService = function() {
       var ref_url = obj_url + "/" + obj_id + "/tags/";
       var obj_id_url =  obj_url + "/" + obj_id;
       // TODO: this is not being called
-      for( atag of tags ) {
+      for( var atag in tags ) {
         console.log( atag );
 
         // add tag to entity
@@ -163,6 +166,18 @@ var databaseService = function() {
       //   this.addToList( "/tags/" + atag + obj_id_url );
       // }
 
+    },
+    
+    // adds launchlist_key to array of topics in database
+    addToTopics: function( launchlist_key, topics ) {
+      if( DEVELOPING )
+        console.log("databaseService.addToTopics: ",launchlist_key, topics  );      
+      
+      for( var topic in topics ) {
+        var url = "/topics/" + topic + "/launchlists/" + launchlist_key;
+        this.addItemToList( url, true );
+      }
+      
     },
 
     init: function( $scope ) {
@@ -782,6 +797,12 @@ app.service( "tagService", function() {
     new Tag( "video", "content_type" )
   ];
 
+  // TODO: make this dynamic
+  var topic_tags = [
+    new Tag( "design", "topic" ),
+    new Tag( "music", "topic" ),
+    new Tag( "random", "topic" )
+  ];
 
   return {
     // content types for resources
@@ -792,6 +813,9 @@ app.service( "tagService", function() {
 
     // resource specfic tags
     resource_tags: resource_tags,
+    
+    // topics for launchlists,
+    topic_tags: topic_tags,
 
     // tag on click on handler
     tagClicked: function( tag ) {
