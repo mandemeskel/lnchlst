@@ -388,9 +388,33 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     // TODO: save new order list items
     // move item to a new place in the list
     moveItem: function( usurper, from, to ) {
-      var victim = this.list[ to ];
-      this.list.splice( to, 1, usurper );
-      this.list.splice( from, 1, victim );
+      if( DEVELOPING )
+        console.log( "launchlist.moveItem", usurper, from, to );
+      
+      // the list is ordered by the order property so that when we move
+      // list objects we have to change their order property to persist
+      // the move
+      var len = this.list.length;
+      for( var n=0; n < len; n++ ) {
+        if( this.list[ n ].order == to ) {
+          
+          this.list[ n ].order = from;
+          this.list[ n ].needs_update = true;
+        }
+      }
+                                                                     
+      usurper.order = to;
+      // make sure this list item is updated to database
+      usurper.needs_update = true;
+      
+      // var victim = this.list[ to ];
+      // console.log( "launchlist.moveItem before", this.list );
+      
+      // this.list.splice( to, 1, usurper );
+      // console.log( "launchlist.moveItem move 1", this.list );
+      
+      // this.list.splice( from, 1, victim );
+      // console.log( "launchlist.moveItem move 2", this.list );
     },
 
     // TODO

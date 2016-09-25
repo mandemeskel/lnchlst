@@ -600,7 +600,8 @@ var databaseService = function() {
       
       // save new items added to alunchlist
       if( launchlist.new_items !== undefined ) {
-        for( var n=0; n < launchlist.new_items.length; n++ ) {
+        var len = launchlist.new_items.length;
+        for( var n=0; n < len; n++ ) {
           
           var new_item = launchlist.new_items[ n ];
           
@@ -653,6 +654,17 @@ var databaseService = function() {
           
         }
       }
+      
+      // save new items added to alunchlist
+      // if( launchlist.new_items !== undefined ) {
+      //   var len = launchlist.new_items.length;
+      //   for( var n=0; n < len; n++ ) {
+        
+          
+          
+      //   }
+      // }
+      
        
      // update the launchlist itself
     // this.updateLaunchlist( launchlist );
