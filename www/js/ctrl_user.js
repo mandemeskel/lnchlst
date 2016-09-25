@@ -718,8 +718,11 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     // get the launchlist ready for editng, transform this from
     // a dictionary to an array
     var temp_list = [];
-    for( var item in launchlist.list )
-      temp_list.push( launchlist.list[item] );
+    for( var key in launchlist.list ) {
+      var item = launchlist.list[ key ];
+      item.key = key;
+      temp_list.push( item );
+    }
     launchlist.list = temp_list;
     
     $scope.launchlist.clear();

@@ -86,20 +86,20 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
       let item = $scope.launchlist.list[ n ];
       // console.log( item );
 
+      // DONE: switch to item.order when all the dummy launchlists are gone
+      // the order of the item in the launchlist
+      // var order;
+      // if( item.index === undefined ) 
+      //   order = item.order;
+      // else
+      //   order = item.index;
+      
       // headings don't need to be retrieved from db
       // they come with the launchlist.list
       if( item.type == ITEM_TYPES.heading ) {
-        
-        // TODO: switch to item.order when all the dummy launchlists are gone
-        // the order of the item in the launchlist
-        var order;
-        if( item.index === undefined ) 
-          order = item.order;
-        else
-          order = item.index;
           
         $scope.launchlist.list_objects.push(
-          { type: item.type, item: item, order: order }
+          { type: item.type, item: item, order: item.order }
         );
         continue;
 
@@ -112,7 +112,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
             var obj = {
               type: item.type,
               item: snapshot.val(),
-              order: item.index,
+              order: item.order,
               id: item.value
             };
 

@@ -655,19 +655,23 @@ var databaseService = function() {
         }
       }
       
-      // save new items added to alunchlist
-      // if( launchlist.new_items !== undefined ) {
-      //   var len = launchlist.new_items.length;
-      //   for( var n=0; n < len; n++ ) {
-        
+      // update existing launchlist
+      if( launchlist.new_items !== undefined ) {
+        var len = launchlist.list.length;
+        for( var n=0; n < len; n++ ) {
           
+          var item = launchlist.list[ n ];
           
-      //   }
-      // }
+          if( !item.needs_update ) continue;
+          
+          this.updateLaunchlistItem( launchlist.key, item );
+          
+        }
+      }
       
        
      // update the launchlist itself
-    // this.updateLaunchlist( launchlist );
+     // this.updateLaunchlist( launchlist );
       
       
     },
@@ -678,7 +682,7 @@ var databaseService = function() {
         console.log( "databaseService.updateLaunchlist: ", launchlist );
         
       var launchlist_url = "/launchlists/" + launchlist.key + "/";
-      var updates= {};
+      var updates = {};
       
       updates[ launchlist_url + "name" ] = launchlist.name;
       updates[ launchlist_url + "description" ] = launchlist.description;
@@ -687,6 +691,20 @@ var databaseService = function() {
       this.firebaseUpdate( updates ).then( dbSuccess, dbError );
       // this.firebaseSet( launchlist_url + "name", launchlist.name );
       // this.firebaseSet( launchlist_url + "description", launchlist.description );
+    },
+    
+    // update existing items in launchlist
+    updateLaunchlistItem: function( launchlist_key, item ) {
+      if( DEVELOPING )
+        console.log( "databaseService.updateLaunchlistItem: ", launchlist_key, item );
+      
+      var launchlist_url = "/launchlists/" + launchlist_key + "/list/" + item.key + "/";
+      var updates = {};
+      updates[ launchlist_url + "order" ] = item.order;
+      updates[ launchlist_url + "value" ] = item.value;
+      
+      this.firebaseUpdate( updates ).then( dbSuccess, dbError );
+      
     },
 
     // save item at firebase url, overwrites existing item at url
