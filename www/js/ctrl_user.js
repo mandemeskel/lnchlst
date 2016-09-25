@@ -1,12 +1,8 @@
 app.controller('UserCtrl', function($scope, databaseService, tagService) {
   var DEVELOPING = true;
-  // Item types
-  $scope.ITEM_TYPES = {
-    community: "C",
-    heading: "H",
-    launchlist: "L",
-    resource: "R",
-  };
+  // Item types, this $scope variable is so that we have acces to
+  // ITEM_TYPES in dom
+  $scope.ITEM_TYPES = ITEM_TYPES;
   
   $scope.tab = "user";
   $scope.resources_show_delete = false;
@@ -207,7 +203,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     list_object: function( name, order, type, key ) {
       this.name = name;
       this.description;
-      this.index = order;
+      this.order = order;
       this.type = type;
       this.key = key;
     },
@@ -284,7 +280,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       this.name = launchlist.name;
       this.description = launchlist.description;
       this.icon = launchlist.icon;
-      this.uid = $scope.user.user_id;
+      this.uid = $scope.user.uid;
       
       if( launchlist.headings !== undefined )
         this.headings = launchlist.headings;
@@ -346,8 +342,14 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
         if( item.key )
           list_obj.key = item.key;
       
+        list_obj.link = item.link;
+        // TODO: add tags
+        // list_obj.tags = tagService.getSelectedTags( tagService.resource_tags );
+        // list_obj.tags = tagService.getSelectedTags( tagService.content_types );
+      
       }
       
+      // TODO: get all info from editor
       // the item type i.e. resource, launchlist, et al.
       list_obj.type = type;
       list_obj.name = item.name;
@@ -402,8 +404,14 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
         this.needs_save = true;
         // TODO: tags are NOT saved
         this.tags = tagService.getSelectedTags( tagService.launchlist_tags );
-        // get user input from launchlist editor form
-        this.getUserInput()
+        // get databaseServicer input from launchlist editor form
+        if( this.editing_self ) {
+          
+          this.getUserInput();
+          // update the launchlist itself
+          databaseService.updateLaunchlist( this );
+          
+        }
         
         // databaseService.saveItem( launchlist, ITEM_TYPES.launchlist );
         databaseService.saveTheLaunchlist( this );
@@ -460,16 +468,24 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     // submit handler for editor
     onEditorSubmit: function() {
       
+      // add item to launchlist
       if( !this.editing_self ) {
       
         this.addItem( this.new_item, this.new_item.type );
         this.editor_msg = "Saved!";
         this.new_item.clear();
         
+      // update launchlist info: name and description
+      } else {
+        
+        this.getUserInput();
+        // update the launchlist itself
+        databaseService.updateLaunchlist( this );
+        
       }
       
       // TODO: remove this? save on editor close???
-      this.save()
+      // this.save()
       
     },
     
@@ -478,9 +494,9 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       
       switch( type ) {
         
-        case $scope.ITEM_TYPES.heading:
-        case $scope.ITEM_TYPES.launchlist:
-        case $scope.ITEM_TYPES.resource:
+        case ITEM_TYPES.heading:
+        case ITEM_TYPES.launchlist:
+        case ITEM_TYPES.resource:
           var item = new Item();
           item.type = type;
         break;
@@ -661,7 +677,14 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
   $scope.editLaunchlist = function( launchlist ) {
     if( DEVELOPING )
       console.log( "editLaunchlist: ", launchlist  );
-      
+    
+    // get the launchlist ready for editng, transform this from
+    // a dictionary to an array
+    var temp_list = [];
+    for( var item in launchlist.list )
+      temp_list.push( launchlist.list[item] );
+    launchlist.list = temp_list;
+    
     $scope.launchlist.clear();
     $scope.launchlist.set( launchlist );
     $scope.launchlist.editing = true;

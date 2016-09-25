@@ -5,10 +5,10 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 var ITEM_TYPES = {
-  community: "C",
-  heading: "H",
-  launchlist: "L",
-  resource: "R",
+  community: "communities",
+  heading: "heading",
+  launchlist: "launchlist",
+  resource: "resource",
 };
 
 var app = angular.module('main', ['ionic', 'main.controllers'])

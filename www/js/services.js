@@ -49,11 +49,14 @@ var databaseService = function() {
     addLaunchlist: function( launchlist, onSuccess, onError ) {
 
       var launchlist_key = this.addModel( launchlist.uid, launchlist, "launchlist", onSuccess, onError );
+      
+      if( DEVELOPING )
+        console.log( "databaseService.addLaunchlist, launchlist key:", launchlist_key );
 
-      console.log( "databaseService.addLaunchlist, launchlist key:", launchlist_key );
-
-      if( launchlist.tags != undefined )
+      if( launchlist.tags !== undefined )
         this.addTag( launchlist_key, "launchlist", launchlist.tags );
+        
+      return launchlist_key;
 
     },
 
@@ -122,7 +125,8 @@ var databaseService = function() {
         "users/" + uid + resource_url );
       user_resources.set( true ).then( success, error );
 
-      this.addTag( new_resource.key, "resource", resource.tags );
+      if( resource.tags !== undefined )
+        this.addTag( new_resource.key, "resource", resource.tags );
       
       return new_resource.key;
 
@@ -446,25 +450,27 @@ var databaseService = function() {
     },
 
     // add item to launchlist
+    // TODO: add communities
     addToLaunchlist: function( launchlist_key, item ) {
       if( DEVELOPING  )
-        console.log( "databaseService.addToLaunchlist: saving", item );
+        console.log( "databaseService.addToLaunchlist:", item );
       
       var item_list_url = "/launchlists/" + launchlist_key + "";
       var list_url = item_list_url + "/list/" + item.key;
       
-      // add item to launchlist url
-      if( type == ITEM_TYPES.launchlist ) {
+      // add launchlist to launchlists url
+      if( item.type == ITEM_TYPES.launchlist ) {
         
-        item_list_url += "/child_launchlists";
+        item_list_url += "/child_launchlists/" + item.key;
+      
+      // add resource to resources urlheading
+      } else if( item.type == ITEM_TYPES.resource ) {
         
-      } else if( type == ITEM_TYPES.resource ) {
+        item_list_url += "/resources/" + item.key;
         
-        item_list_url += "/resources";
+      } else if( item.type != ITEM_TYPES.heading ) {
         
-      } else {
-        
-        console.error( "databaseService.addToLaunchlist: bad item type=", type );
+        console.error( "databaseService.addToLaunchlist: bad item =", item );
         return false;
         
       }
@@ -477,8 +483,39 @@ var databaseService = function() {
       
       // add to launchlist list
       this.addItemToList( list_url, model, item.key );
-      // add to item specfic list
-      this.addItemToList( item_list_url, item.key );
+      
+      // headings are already saved under the launchlist's
+      // headings list when created, we just need to add it to
+      // the launchlist list url
+      if( item.type != ITEM_TYPES.heading ) 
+        // add to item specfic list
+        this.addItemToList( item_list_url, true );
+      
+    },
+
+    // adds item to user's list
+    addToUserList: function( uid, item_type, item_key ) {
+      if( DEVELOPING )
+        console.log( "databaseService.addToUserList", uid, item_type, item_key );
+    
+      if( item_type == ITEM_TYPES.launchlist ) {
+        
+        var url = "user/" + uid  + "/launchlists/";
+        
+      } else if( item_type == ITEM_TYPES.resources ) {
+        
+        var url = "user/" + uid  + "/resources/";
+        
+      } else {
+        
+        console.error( "databaseService.addToUserList: bad type = ", item_type );    
+        return false;
+      
+      }
+      
+      url += item_key;
+      
+      return this.addItemToList( url, true );
       
     },
 
@@ -489,38 +526,62 @@ var databaseService = function() {
 
     // save heading under launchlist
     saveHeading: function( item, launchlist_key ) {
+      if( DEVELOPING )
+        console.log( "databaseService.saveHeading: ", item, launchlist_key );
+      
+      // the info that is actually being saved into the database
       var heading = {
-        index: item.order,
+        // index: item.order, // do we need to save order here and in the list?
         value: item.name,
-        description: item.description,
-        type: "heading"
+        description: item.description
+        // type: "heading" // don't need to save the content type
       };
 
       var url = "launchlists/" + launchlist_key + "/headings"
-      this.firebasePush( url, heading, dbSuccess, dbError );
+      // return the new firebase item's key
+      return this.firebasePush( url, heading, dbSuccess, dbError );
     },
     
     // adds a launchlist to the database
-    saveLaunchlist: function( item, uid ) {
+    saveLaunchlist: function( item, user_id ) {
+      if( DEVELOPING )
+        console.log("databaseService.saveLaunchlist: ", item, user_id  );
       
-      item.uid = uid;
-      return this.addResource( item );
+      // the model to be saved into the database
+      // TODO: don't do this here, we should pass clean objects and
+      // separate concerns
+      // TODO: add all fields form launchlist editor
+      var model = { 
+        description: item.description,
+        name: item.name,
+        uid: user_id
+      };
       
+      return this.addLaunchlist( model );
     },
     
     // adds a resource to the database
-    saveResource: function( item, uid ) {
+    saveResource: function( item, user_id ) {
+      if( DEVELOPING )
+        console.log("databaseService.saveResource: ", item, user_id  );
       
-      item.uid = uid;
-      return this.addLaunchlist( item );
+      // TODO: add all fields form resources editor
+      // actual thing being pushed to databse
+      var model = { 
+        description: item.description,
+        name: item.name,
+        link: item.link,
+        uid: user_id
+      };
       
+      return this.addResource( model );
     },
     
     // save the launchlist in its entirety
     // TODO: should be a $scope.launchlist function
     saveTheLaunchlist: function( launchlist ) {
       if( DEVELOPING )
-        console.log("databaseService.saveTheLaunchlist: ", launchlist  );
+        console.log( "databaseService.saveTheLaunchlist: ", launchlist  );
       
       // save new items added to alunchlist
       if( launchlist.new_items !== undefined ) {
@@ -528,36 +589,58 @@ var databaseService = function() {
           
           var new_item = launchlist.new_items[ n ];
           
+          // save heading
           if( new_item.type == ITEM_TYPES.heading ) {
           
             // headings get saved under their respective launchlist
             // not as independent database items
-            this.saveHeading( new_item, launchlist.key );
-            continue;
+            var key = this.saveHeading( new_item, launchlist.key );
           
-          } else if( new_item.type == ITEM_TYPES.resource && new_item.key === undefined ) {
+          // save resource
+          } else if( new_item.type == ITEM_TYPES.resource ) {
+            
+            if( new_item.key === undefined ) {
+              
+              var key = this.saveResource( new_item, launchlist.uid );
+              
+            } else {
+              
+              // if the resource has key, it is already in the database
+              // we just need to add it the launchlist
+              this.addToLaunchlist( launchlist.key, new_item );
+              continue;
+              
+            }
           
-            var key = this.saveResource( new_item, launchlist.uid );
-            if( key === false ) continue;
-            new_item.key = key;  
-          
+          // save launchlist
           } else if( new_item.type == ITEM_TYPES.launchlist ) {
           
             var key = this.saveLaunchlist( new_item, launchlist.uid );
-            if( key === false ) continue;
-            new_item.key = key;
             
-          } else
+          } else {
+            
+            console.warn( "databaseService.saveTheLaunchlist: bad ITEM_TYPE in new_item.type = ", new_item.type  );
             continue;
+          
+          }
+          
+          if( key === false || key === undefined ) {
+            console.warn( "databaseService.saveTheLaunchlist: no key returned for new_item = ", new_item  );
+            continue;
+          }
+          new_item.key = key;
           
           // add item the database's lists
           this.addToLaunchlist( launchlist.key, new_item );
+          
+          // add item to user's various lists
+          this.addToUserList( launchlist.uid, new_item.type, key );
           
         }
       }
        
      // update the launchlist itself
-     this.updateLaunchlist( launchlist );
+    // this.updateLaunchlist( launchlist );
       
       
     },

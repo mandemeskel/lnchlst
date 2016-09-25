@@ -288,7 +288,7 @@
                   <!-- UI specific to resources -->
                   <div ng-show="launchlist.newItemIs( ITEM_TYPES.resource )">
                     <label class="item item-input">
-                      <input ng-model="resource.link" class="resource-link" type="url" placeholder="Link" ngRequired="launchlist.newItemIs( ITEM_TYPES.resource )">
+                      <input ng-model="launchlist.new_item.link" class="resource-link" type="url" placeholder="Link" ngRequired="launchlist.newItemIs( ITEM_TYPES.resource )">
                     </label>
       
                     <div class="button-bar tag-bar item">
@@ -331,7 +331,7 @@
             <ion-item ng-repeat="item in launchlist.list track by $index" ng-click="">
               <div class="{{item.type}}">
                 
-                <h3> {{item.name}} </h3>
+                <h3> {{item.value}} </h3>
                 <p> {{item.description}} </p>
                 
                 <ion-reorder-button class="ion-navicon"
