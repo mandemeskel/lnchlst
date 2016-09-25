@@ -947,6 +947,26 @@ app.filter( "capitalize", function() {
 
 } );
 
+// function cap( str ) {
+  
+//   if( str == undefined ) return "";
+  
+//   str = str.charAt(0).toUpperCase() + str.substr(1).toLowerCase();
+  
+//   var n = str.search( ' ' ), next;
+//   while( n != -1 ) {
+    
+//     next = n + 1;
+//     if( str.length == next ) return str;
+//     str = str.slice( 0, next ) + str[ next ].toUpperCase() + str.slice( next + 1 );
+//     n = str.substring( next ).search( ' ' );
+  
+//   }
+  
+//   return str;
+  
+// }
+
 
 /**
  * The ajaxService handles all the server calls.

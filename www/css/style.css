@@ -474,6 +474,7 @@ ion-view ion-content {
 	width: 100.3%;
 	z-index: 3;
 }
+
 /*#my_resources a.overlay {*/
 /*  left: -50px;*/
 /*}*/
@@ -490,6 +491,10 @@ ion-view ion-content {
   transform: scale(0.9);   
   /*background-color: pink;*/
   right: -10px;
+}
+
+#launchlist h1.launchlist-name {
+  color: white;
 }
 
 
