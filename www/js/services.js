@@ -29,24 +29,31 @@ var databaseService = function() {
       new_item.set( item ).then( onSuccess, onError );
       return true;
     },
-
-    addToList: function( list_url, onSuccess, onError ) {
+    
+    // TODO: DRY
+    addItemToList: function( list_url, value, onSuccess, onError ) {
       if( onSuccess == undefined ) onSuccess = pushSuccess;
       if( onError == undefined ) onError = dbError;
-
+      if( value == undefined ) value = true;
+    
       var the_list = firebase.database().ref( list_url );
-      the_list.set( true ).then( onSuccess, onError );
+      the_list.set( value ).then( onSuccess, onError );
       return true;
     },
+    
+    // TODO: DRY
+    addToList: function( list_url, onSuccess, onError ) {
+      return this.addItemToList( list_url, true, onSuccess, onError );
+    },
 
-    addLaunchlist: function( launchlist, tags, onSuccess, onError ) {
+    addLaunchlist: function( launchlist, onSuccess, onError ) {
 
       var launchlist_key = this.addModel( launchlist.uid, launchlist, "launchlist", onSuccess, onError );
 
       console.log( "databaseService.addLaunchlist, launchlist key:", launchlist_key );
 
-      if( tags != undefined )
-        this.addTag( launchlist_key, "launchlist", tags );
+      if( launchlist.tags != undefined )
+        this.addTag( launchlist_key, "launchlist", launchlist.tags );
 
     },
 
@@ -116,6 +123,8 @@ var databaseService = function() {
       user_resources.set( true ).then( success, error );
 
       this.addTag( new_resource.key, "resource", resource.tags );
+      
+      return new_resource.key;
 
     },
 
@@ -135,7 +144,7 @@ var databaseService = function() {
         console.log( atag );
 
         // add tag to entity
-        this.addToList( ref_url + atag, onSuccess );
+        this.addToList( ref_url + atag, true, onSuccess );
 
         // update tag with id of entity
         this.addToList( "/tags/" + atag + obj_id_url );
@@ -436,10 +445,49 @@ var databaseService = function() {
 
     },
 
+    // add item to launchlist
+    addToLaunchlist: function( launchlist_key, item ) {
+      if( DEVELOPING  )
+        console.log( "databaseService.addToLaunchlist: saving", item );
+      
+      var item_list_url = "/launchlists/" + launchlist_key + "";
+      var list_url = item_list_url + "/list/" + item.key;
+      
+      // add item to launchlist url
+      if( type == ITEM_TYPES.launchlist ) {
+        
+        item_list_url += "/child_launchlists";
+        
+      } else if( type == ITEM_TYPES.resource ) {
+        
+        item_list_url += "/resources";
+        
+      } else {
+        
+        console.error( "databaseService.addToLaunchlist: bad item type=", type );
+        return false;
+        
+      }
+      
+      var model = {
+        type: item.type,
+        order: item.order,
+        value: item.name
+      };
+      
+      // add to launchlist list
+      this.addItemToList( list_url, model, item.key );
+      // add to item specfic list
+      this.addItemToList( item_list_url, item.key );
+      
+    },
+
+    // load launchlist from server
     loadLaunchlit: function( launchlist_id, onYes, onNo ) {
       // TODO: load and return launchlist
     },
 
+    // save heading under launchlist
     saveHeading: function( item, launchlist_key ) {
       var heading = {
         index: item.order,
@@ -448,21 +496,135 @@ var databaseService = function() {
         type: "heading"
       };
 
-      var url = "launchlists/" + launchlist_key + "/"
+      var url = "launchlists/" + launchlist_key + "/headings"
       this.firebasePush( url, heading, dbSuccess, dbError );
     },
+    
+    // adds a launchlist to the database
+    saveLaunchlist: function( item, uid ) {
+      
+      item.uid = uid;
+      return this.addResource( item );
+      
+    },
+    
+    // adds a resource to the database
+    saveResource: function( item, uid ) {
+      
+      item.uid = uid;
+      return this.addLaunchlist( item );
+      
+    },
+    
+    // save the launchlist in its entirety
+    // TODO: should be a $scope.launchlist function
+    saveTheLaunchlist: function( launchlist ) {
+      if( DEVELOPING )
+        console.log("databaseService.saveTheLaunchlist: ", launchlist  );
+      
+      // save new items added to alunchlist
+      if( launchlist.new_items !== undefined ) {
+        for( var n=0; n < launchlist.new_items.length; n++ ) {
+          
+          var new_item = launchlist.new_items[ n ];
+          
+          if( new_item.type == ITEM_TYPES.heading ) {
+          
+            // headings get saved under their respective launchlist
+            // not as independent database items
+            this.saveHeading( new_item, launchlist.key );
+            continue;
+          
+          } else if( new_item.type == ITEM_TYPES.resource && new_item.key === undefined ) {
+          
+            var key = this.saveResource( new_item, launchlist.uid );
+            if( key === false ) continue;
+            new_item.key = key;  
+          
+          } else if( new_item.type == ITEM_TYPES.launchlist ) {
+          
+            var key = this.saveLaunchlist( new_item, launchlist.uid );
+            if( key === false ) continue;
+            new_item.key = key;
+            
+          } else
+            continue;
+          
+          // add item the database's lists
+          this.addToLaunchlist( launchlist.key, new_item );
+          
+        }
+      }
+       
+     // update the launchlist itself
+     this.updateLaunchlist( launchlist );
+      
+      
+    },
+    
+    // updates launchlist name and description only, for now
+    updateLaunchlist: function( launchlist ) {
+      if( DEVELOPING )
+        console.log( "databaseService.updateLaunchlist: ", launchlist );
+        
+      var launchlist_url = "/launchlists/" + launchlist.key + "/";
+      var updates= {};
+      
+      updates[ launchlist_url + "name" ] = launchlist.name;
+      updates[ launchlist_url + "description" ] = launchlist.description;
+      
+      // NOTE: firebase.ref().update is not persisting changes
+      this.firebaseUpdate( updates ).then( dbSuccess, dbError );
+      // this.firebaseSet( launchlist_url + "name", launchlist.name );
+      // this.firebaseSet( launchlist_url + "description", launchlist.description );
+    },
 
+    // save item at firebase url, overwrites existing item at url
     firebaseSet: function( url, item, onYes, onNo ) {
+      if( DEVELOPING )
+        console.log( "databaseService.firebaseSet: ", url, item );
+            
+      if( onYes === undefined ) onYes = dbSuccess;
+      
+      if( onNo === undefined ) onNo = dbError;
+      
       firebase.database().ref( url ).set( item ).then( onYes, onNo );
     },
 
+    // add item to list at the passed url
     // returns a key of item saved at that list list url
     firebasePush: function( list_url, item, onYes, onNo ) {
+      if( DEVELOPING )
+        console.log( "databaseService.firebasePush: ", list_url, item );
+      
+      if( onYes === undefined ) onYes = dbSuccess;
+      
+      if( onNo === undefined ) onNo = dbError;
+      
       var new_item = firebase.database().ref( list_url ).push();
-
-      new_item.set( item ).then( onYes, onNo );
-
-      return new_item;
+      
+      try {
+        new_item.set( item ).then( onYes, onNo );
+      } catch( error ) {
+        console.error( "databaseService.firebasePush: ", error, item );
+        return false;
+      }
+      
+      return new_item.key;
+    },
+    
+    // TODO: add promise handling 
+    // update exisitng entity, specific fields
+    firebaseUpdate: function( updates ) {
+      if( DEVELOPING )
+        console.log( "databaseService.firebaseUpdate: ", updates );
+      
+      // if( onYes === undefined ) onYes = dbSuccess;
+      
+      // if( onNo === undefined ) onNo = dbError;
+      
+      // update returns a promise
+      return firebase.database().ref().update( updates );
     }
 
   } );

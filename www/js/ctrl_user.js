@@ -190,6 +190,8 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     name: "",
     description: "",
     icon: "",
+    // user is
+    uid: "",
     tags: [],
     resources: [],
     headings: [],
@@ -220,6 +222,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       this.name = "";
       this.description = "";
       this.icon = "";
+      this.uid = "";
       this.resources = [];
       this.headings = [];
       this.launchlists = [];
@@ -261,6 +264,12 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       };
     },
     
+    // transfers info from launchlist edito to launchlist
+    getUserInput: function() {
+      this.name = this.new_item.name;
+      this.description = this.new_item.description;
+    },
+    
     // set properties to launchlist's properties
     set: function( launchlist ) {
       if( launchlist == undefined ) {
@@ -275,6 +284,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       this.name = launchlist.name;
       this.description = launchlist.description;
       this.icon = launchlist.icon;
+      this.uid = $scope.user.user_id;
       
       if( launchlist.headings !== undefined )
         this.headings = launchlist.headings;
@@ -329,7 +339,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       if( type === undefined )
         type = item.type;
       
-      if( type == $scope.ITEM_TYPES.resource ) {
+      if( type == ITEM_TYPES.resource ) {
         
         // item = $scope.user.resources[ item ];
         
@@ -338,6 +348,8 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       
       }
       
+      // the item type i.e. resource, launchlist, et al.
+      list_obj.type = type;
       list_obj.name = item.name;
       
       if( item.description )
@@ -374,30 +386,39 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
         console.log( "saving launchlist" );
 
       // for now we will just overwrite the entire object in the db
-      var launchlist = this.get(),
-        tags = tagService.getSelectedTags( tagService.launchlist_tags );
+      // var launchlist = this.get();
+      // launchlist.tags = tagService.getSelectedTags( tagService.launchlist_tags );
 
       // TODO: add launchlist editing
       if( this.editing ) {
-        
-        if( !this.needs_save && force_save !== true ) {
-          console.log( "launchlist.save, this.needs_save is false" );
-          return false;
-        }
 
+        // TODO: why???        
+        // if( !this.needs_save && force_save !== true ) {
+        //   console.log( "launchlist.save, this.needs_save is false" );
+        //   return false;
+        // }
+
+        // i dont even know why???
         this.needs_save = true;
+        // TODO: tags are NOT saved
+        this.tags = tagService.getSelectedTags( tagService.launchlist_tags );
+        // get user input from launchlist editor form
+        this.getUserInput()
         
-        databaseService.saveItem( launchlist, $scope.ITEM_TYPES.launchlist );
+        // databaseService.saveItem( launchlist, ITEM_TYPES.launchlist );
+        databaseService.saveTheLaunchlist( this );
         
         // this.editing = false;
         this.clear();
         
       // TODO: save
       } else {
+        
+        var launchlist = this.get();
+        launchlist.tags = tagService.getSelectedTags( tagService.launchlist_tags );
 
         databaseService.addLaunchlist(
           launchlist,
-          tags,
           function() {
             // update my launchlists list
             $scope.user.launchlists.push( $scope.launchlist.get() );

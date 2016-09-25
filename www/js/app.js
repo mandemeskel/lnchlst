@@ -4,6 +4,13 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
+var ITEM_TYPES = {
+  community: "C",
+  heading: "H",
+  launchlist: "L",
+  resource: "R",
+};
+
 var app = angular.module('main', ['ionic', 'main.controllers'])
 
 .run(function($ionicPlatform) {
@@ -20,13 +27,6 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-    
-    var ITEM_TYPES = {
-      community: "C",
-      heading: "H",
-      launchlist: "L",
-      resource: "R",
-    };
     
   });
 })
