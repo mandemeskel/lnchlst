@@ -458,9 +458,9 @@ ion-view ion-content {
 #my_resources > ion-list > div.list,
 #my_launchlists > ion-list > div.list {
 	position: relative;
+  padding-top: 82px;
 	/*overflow: scroll;*/
 	/*height: 500px;*/
-	padding-top: 82px;
 }
 #userpage .row.item.item-header {
 	/*width: auto;*/
@@ -473,6 +473,9 @@ ion-view ion-content {
 	left: 0;
 	width: 100.3%;
 	z-index: 3;
+}
+#userpage #userpage div.title.title-center.header-item {
+  text-transform: capitalize;
 }
 
 /*#my_resources a.overlay {*/
@@ -495,6 +498,7 @@ ion-view ion-content {
 
 #launchlist h1.launchlist-name {
   color: white;
+  text-transform: capitalize;
 }
 
 

@@ -748,4 +748,20 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       console.log( "releaseResource: ", resource_index );
   };
 
+  // TODO: item does not have type property 
+  /**
+   * Remove it from database
+   */
+  $scope.deleteItem = function( item, index ) {
+    if( DEVELOPING )
+      console.log( "$scope.deleteItem:", item, index );
+    
+    // remove item from database
+    // databaseService.deleteLaunchlist( item );
+    
+    // remove item from user object
+    // if( item.type == ITEM_TYPES.heading )
+    
+  }
+
 });

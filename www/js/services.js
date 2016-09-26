@@ -741,6 +741,17 @@ var databaseService = function() {
       return new_item.key;
     },
     
+    // removes database node at url location and all chidl nodes
+    firebaseRemove: function( url, onComplete ) {
+      if( DEVELOPING )
+        console.log( "databaseService.firebaseRemove: ", url, onComplete );
+      
+      if( onComplete === undefined ) onComplete = dbSuccess;
+      
+      return firebase.database().ref( url ).remove().then( onComplete );
+    
+    },
+    
     // TODO: add promise handling 
     // update exisitng entity, specific fields
     firebaseUpdate: function( updates ) {

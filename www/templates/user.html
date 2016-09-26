@@ -1,5 +1,5 @@
 <div id="userpage">
-<ion-view view-title="Welcome {{ user.displayName | capitalize }}">
+<ion-view view-title="Welcome {{ user.displayName || 'User' }}">
 
 
 	<ion-nav-bar class="bar-pink">
@@ -98,12 +98,12 @@
   			    </ion-option-button>
   			    
   			    <ion-option-button class="button-assertive"
-  			                       ng-click="deleteResource( resource )">
+  			                       ng-click="deleteItem( resource, $index )">
   			      Delete
   			    </ion-option-button>
   			    
   			    <ion-delete-button class="ion-minus-circled"
-  			                       ng-click="deleteResource( $index )">
+  			                       ng-click="deleteItem( resource, $index )">
   			    </ion-delete-button>
   			                
             <a class="overlay" href="{{ resource.link }}" target="_blank"> </a>
@@ -191,11 +191,11 @@
   			      Edit
   			    </ion-option-button>
   			    <ion-option-button class="button-assertive"
-  			                       ng-click="editLaunchlist(launchlist)">
+  			                       ng-click="deleteItem( launchlist, $index )">
   			      Delete
   			    </ion-option-button>
   			    <ion-delete-button class="ion-minus-circled"
-  			                       ng-click="deleteLaunchlist( $index )">
+  			                       ng-click="deleteItem( launchlist, $index )">
   			    </ion-delete-button>
   
   				</ion-item>
