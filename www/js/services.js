@@ -493,7 +493,7 @@ var databaseService = function() {
       var model = {
         type: item.type,
         order: item.order,
-        value: item.name
+        value: item.value
       };
       
       // add to launchlist list
@@ -547,7 +547,7 @@ var databaseService = function() {
       // the info that is actually being saved into the database
       var heading = {
         // index: item.order, // do we need to save order here and in the list?
-        value: item.name,
+        value: item.value,
         description: item.description
         // type: "heading" // don't need to save the content type
       };
@@ -568,7 +568,7 @@ var databaseService = function() {
       // TODO: add all fields form launchlist editor
       var model = { 
         description: item.description,
-        name: item.name,
+        name: item.value,
         uid: user_id
       };
       
@@ -584,8 +584,9 @@ var databaseService = function() {
       // actual thing being pushed to databse
       var model = { 
         description: item.description,
-        name: item.name,
+        name: item.value,
         link: item.link,
+        source: item.source,
         uid: user_id
       };
       

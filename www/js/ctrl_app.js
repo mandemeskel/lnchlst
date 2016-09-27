@@ -253,9 +253,13 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
   };
 
   // check if user is logged in
-  $scope.user = {};
+  $scope.user = {
+    logged_in: false
+  };
+  // TODO: show my account page to non-logged in users?
   $scope.showMyAccountBtn = function() {
-    return ( $scope.tab == 'user' || !$scope.user.logged_in );
+    console.log( ( $scope.tab != 'user' && $scope.user.logged_in ) );
+    return ( $scope.tab != 'user' && $scope.user.logged_in );
   }
   $scope.isLogedIn = function() {
     firebase.auth().onAuthStateChanged(
@@ -271,7 +275,8 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
           // $scope.user.providerData = user.providerData;
           $scope.user.resources = [];
           $scope.user.launchlists = [];
-
+          $scope.user.logged_in = false;
+          
           // user is verfied and has loged in, update ui
           user.getToken().then( function(accessToken) {
             $scope.user.logged_in = true;

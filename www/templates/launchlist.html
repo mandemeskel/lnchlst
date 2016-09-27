@@ -24,6 +24,7 @@
 
           <div ng-switch-when="heading" class="heading-wrapper">
             <h3 class="heading"> {{ obj.item.value }} </h3>
+            <p> {{ obj.item.description }} </p>
           </div>
 
           <div ng-switch-when="launchlist" class="child-list">
@@ -45,7 +46,8 @@
             <ion-checkbox ng-model="isChecked">
 
               <h3> {{ obj.item.name }} </h3>
-              <p> {{ obj.item.description }} </p>
+              <p class="item-description"> {{ obj.item.description }} </p>
+              <p ng-if="obj.item.source" class="item-source">source: <label>{{ obj.item.source }}</label></p>
 
             </ion-checkbox>
 

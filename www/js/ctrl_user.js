@@ -15,6 +15,8 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     name: "",
     description: "",
     link: "",
+    // where the resource is from
+    source: "",
     tags: [],
     // the orginal unchanged resource
     original: {},
@@ -24,6 +26,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       this.key = "";
       this.name = "";
       this.description = "";
+      this.source = "";
       this.link = "";
       // this.tags = [];
       // TODO: also clear tags
@@ -56,6 +59,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
         name: this.name,
         description: this.description,
         link: this.link,
+        source: this.source,
         uid: this.original.uid,
         tags: tag_dict
       }
@@ -74,6 +78,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       this.name = resource.name;
       this.description = resource.description;
       this.link = resource.link;
+      this.source = resource.source;
 
       // TODO: add a way to edit tags
       for( var resource_tag in resource.tags ) {
@@ -107,13 +112,17 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     }
   };
 
+  /**
+   * The class for the list item objects in launchlists
+   */
   function Item( name, creator) {
     this.name = name;
     this.creator = creator;
     this.description;
     this.link;
+    this.source;
     this.tags = [];
-    // this.content_types;
+    this.content_types;
     
     this.key;
     this.type;
@@ -127,7 +136,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       this.description = undefined;
       this.link = undefined;
       this.tags = undefined;
-      // this.content_types = undefined;
+      this.content_types = undefined;
       
       this.key = undefined;
       this.type = undefined;
@@ -202,7 +211,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     
     // the object that gets saved into the launchlist's list
     list_object: function( name, order, type, key ) {
-      this.name = name;
+      this.value = name;
       this.description;
       this.order = order;
       this.type = type;
@@ -318,11 +327,11 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
     
     // TODO
     addResource: function( resource_id, order ) {
-      if( resource_id == undefined || resource_id == "" )
+      if( resource_id === undefined || resource_id === "" )
         console.error( "launchlist.addResource, no resource id provided", resource_id );
 
       // by default add resources to the start of the list to allow user easier access
-      if( order == undefined ) order = 0;
+      if( order === undefined ) order = 0;
 
       var list_object = new this.list_object(
         order, "resource", resource_id
@@ -357,6 +366,12 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
           list_obj.key = item.key;
       
         list_obj.link = item.link;
+        
+        if( item.source )
+          list_obj.source = item.source;
+        else
+          list_obj.source = "";
+          
         // TODO: add tags
         // list_obj.tags = tagService.getSelectedTags( tagService.resource_tags );
         // list_obj.tags = tagService.getSelectedTags( tagService.content_types );
@@ -366,7 +381,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       // TODO: get all info from editor
       // the item type i.e. resource, launchlist, et al.
       list_obj.type = type;
-      list_obj.name = item.name;
+      list_obj.value = item.name;
       
       if( item.description )
         list_obj.description = item.description;
@@ -572,6 +587,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
 
   // add new resource to database
   $scope.addResource = function() {
+    
     if( $scope.resource.editing_resource ) {
       console.log( "editing resource" );
 

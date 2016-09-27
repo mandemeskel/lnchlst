@@ -58,6 +58,10 @@
   							<label class="item item-input">
   						    <input ng-model="resource.link" class="resource-link" type="url" placeholder="Link" required>
   						  </label>
+  						  
+  						  <label class="item item-input">
+                  <input ng-model="resource.source" class="resource-source" type="text" placeholder="Source">
+                </label>
   
   							<div class="button-bar tag-bar item">
   						  	<h4>Content Type</h4>
@@ -294,6 +298,10 @@
                   <div ng-show="launchlist.newItemIs( ITEM_TYPES.resource )">
                     <label class="item item-input">
                       <input ng-model="launchlist.new_item.link" class="resource-link" type="url" placeholder="Link" ngRequired="launchlist.newItemIs( ITEM_TYPES.resource )">
+                    </label>
+                    
+                    <label class="item item-input">
+                      <input ng-model="launchlist.new_item.source" class="resource-source" type="text" placeholder="Source">
                     </label>
       
                     <div class="button-bar tag-bar item">

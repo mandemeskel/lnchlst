@@ -44,7 +44,7 @@
 
       <div class="sidemenu-btns">
         <ion-list>
-          <ion-item ng-hide="showMyAccountBtn()" menu-close ng-click="changeTab('user')" href="#/user">
+          <ion-item ng-if="showMyAccountBtn()" menu-close ng-click="changeTab('user')" href="#/user">
             My Account
           </ion-item>
           <ion-item ng-click="signup_modal.open()">
