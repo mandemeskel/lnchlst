@@ -533,6 +533,67 @@ var databaseService = function() {
       return this.addItemToList( url, true );
       
     },
+    
+    // removes heading from launchlist 
+    deleteHeading: function( heading_key, launchlist_key, onComplete ) {
+      if( DEVELOPING )
+        console.log( "databaseService.deleteHeading", heading_key, launchlist_key, onComplete );
+      
+    },
+    
+    // TODO: make individual item type delete functions
+    // removes item from databse
+    deleteItem: function( item_key, item_type, user_id, onComplete ) {
+      if( DEVELOPING )
+        console.log( "databaseService.deleteItem", item_key, item_type, user_id, onComplete );
+  
+      if( item_key === undefined ) {
+        console.log( "databaseService.deleteItem, bad item_key = ", item_key );
+        return false;
+      }
+      
+      if( item_type === undefined ) {
+        console.log( "databaseService.deleteItem, bad item_type = ", item_type );
+        return false;
+      }
+      
+      if( user_id === undefined ) {
+        console.log( "databaseService.deleteItem, bad user_id = ", user_id );
+        return false;
+      }
+  
+      switch( item_type ) {
+        case ITEM_TYPES.heading:
+          
+        break;
+        // delete from users/<id>/resources
+        // delete from 
+        case ITEM_TYPES.resource:
+          
+        break;
+        case ITEM_TYPES.launchlist:
+        
+        break;
+        default:
+          console.log( "databaseService.deleteItem, bad item_type = ", item_type );
+        return false;
+      }
+  
+  
+      return true;
+    },
+
+    deleteLaunchlist: function( launchlist_key, user_id, onComplete ) { 
+      if( DEVELOPING )
+        console.log( "databaseService.deleteLaunchlist", launchlist_key, user_id, onComplete ); 
+      
+    },
+    
+    deleteResource: function( resource_key, user_id, onComplete ) {
+      if( DEVELOPING )
+        console.log( "databaseService.deleteResource", resource_key, user_id, onComplete );
+      
+    },
 
     // load launchlist from server
     loadLaunchlit: function( launchlist_id, onYes, onNo ) {
