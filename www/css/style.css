@@ -115,6 +115,27 @@ ion-view ion-content {
 	float: right;
 }
 
+
+/** show item options when reorder is true **/
+.show-options .item-options {
+  visibility: visible;
+  right: 75px;
+  pointer-events: auto;
+}
+/** BUGG: transition scews up how wrappers hides these buttons **/
+.item-options .button {
+  /*transition: 0.5s;*/
+}
+/** SAVE: neat depth trick for material buttons **/
+.item-options .button:hover {
+  /* font-size: 12px; */
+  /* opacity: 0.4; */
+  /* color: black; */
+  text-shadow: 0px 5px 5px black;
+  text-decoration: overline;
+}
+
+
 /**
  * Neon theme
  * Colors:

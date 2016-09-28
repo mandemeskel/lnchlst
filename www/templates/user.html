@@ -341,7 +341,7 @@
           <ion-list show-delete="checkShowLaunchlistDelete()" show-reorder="true" can-swipe="true" class="launchlists">
           
             <!-- The existing items in the launchlist -->
-            <ion-item ng-repeat="item in launchlist.list | orderBy: 'order' track by $index" ng-click="" class="{{ item.type }} item">
+            <ion-item ng-repeat="item in launchlist.list | orderBy: 'order' track by $index" ng-click="" class="{{ item.type }} item {{ item.type }}{{ $index }}">
               <div class="{{item.type}}">
                 
                 <h3 ng-show="item.value"> {{ item.value }} </h3>
@@ -349,7 +349,7 @@
                 <!--<p> {{item.description}} </p>-->
                 
                 <ion-reorder-button class="ion-navicon"
-                on-reorder="launchlist.moveItem( item, $fromIndex, $toIndex )">
+                on-reorder="launchlist.moveItem( item, $fromIndex, $toIndex )" ng-click="launchlist.showEditItemMenu( item.type, $index )">
         
                 <ion-option-button class="button-positive"
                                ng-click="launchlist.shareItem( $index )">

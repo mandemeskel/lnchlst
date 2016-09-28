@@ -119,6 +119,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
             if( DEVELOPING ) console.log( obj );
 
             $scope.launchlist.list_objects.push( obj );
+            $scope.$apply();
           };
 
       // make the urls to fetch entities from database
@@ -254,11 +255,12 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
 
   // check if user is logged in
   $scope.user = {
+    uid: undefined,
     logged_in: false
   };
   // TODO: show my account page to non-logged in users?
   $scope.showMyAccountBtn = function() {
-    console.log( ( $scope.tab != 'user' && $scope.user.logged_in ) );
+    // console.log( ( $scope.tab != 'user' && $scope.user.logged_in ) );
     return ( $scope.tab != 'user' && $scope.user.logged_in );
   }
   $scope.isLogedIn = function() {
@@ -266,6 +268,8 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
       function( user ) {
 
         if( user ) {
+          
+          if( $scope.user.uid == user.uid ) return true;
 
           $scope.user.displayName = user.displayName;
           $scope.user.email = user.email;
@@ -341,6 +345,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,
                     // add launchlist's database key for later use
                     launchlist.key = snapshot.key;
                     $scope.user.launchlists.push( launchlist );
+                    $scope.$apply();
                   }
                 )
 

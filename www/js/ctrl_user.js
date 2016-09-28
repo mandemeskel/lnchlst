@@ -517,6 +517,27 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       return this.show_editor;
     },
     
+    // FIXED: can't reorder list due to this listner hogging mouse events
+    // shows menu to edit/delete/share launchlist item
+    edit_item_menu: false,
+    showEditItemMenu: function( item_type, index ) {
+      this.edit_item_menu = !this.edit_item_menu;
+                                  
+      if( this.edit_item_menu ) {
+          
+        jQuery( ".item." + item_type + index ).addClass( "show-options" );
+          
+      } else {
+        
+        jQuery( ".item." + item_type + index ).removeClass( "show-options" );
+        
+      }
+      
+      // console.log( jQuery( ".item." + item_type + index ).attr( "class" ) );
+      
+      return this.edit_item_menu;
+    },
+    
     // submit handler for editor
     onEditorSubmit: function() {
       
