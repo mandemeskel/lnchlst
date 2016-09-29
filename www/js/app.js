@@ -94,8 +94,9 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
     }
   })
 
+  // NOTE: can't do multiple urls
   .state('app.launchlists', {
-    url: '/launchlists/:launchlist_id',
+    url: '/launchlists/:launchlist_id', 
     views: {
       'menuContent': {
         templateUrl: 'templates/launchlist.html',
@@ -103,6 +104,16 @@ var app = angular.module('main', ['ionic', 'main.controllers'])
       }
     }
   })
+  
+  // .state('app.launchlists', {
+  //   url: '/launchlists/:launchlist_id/:launchlist_name',
+  //   views: {
+  //     'menuContent': {
+  //       templateUrl: 'templates/launchlist.html',
+  //       controller: 'LaunchlistCtrl'
+  //     }
+  //   }
+  // })
 
   .state('app.user', {
     url: '/user',

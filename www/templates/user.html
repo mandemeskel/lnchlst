@@ -181,10 +181,12 @@
   				</ion-item>
   
   
-  				<ion-item ng-repeat="launchlist in user.launchlists" ng-click="loadLaunchlistList( launchlist )" href="#/launchlis/{{ launchlist.link }}" target="_blank">
+  				<ion-item ng-repeat="launchlist in user.launchlists">
   
-  					<h3> {{launchlist.name}} </h3>
-  					<p> {{launchlist.description}} </p>
+  					<h3> {{ launchlist.name }} </h3>
+  					<p> {{ launchlist.description }} </p>
+  					
+  					<a class="overlay" href="#/launchlists/{{ launchlist.key }}" target="_blank"> </a>
   
   					<ion-option-button class="button-positive"
   	                       ng-click="shareLaunchlist(launchlist)">

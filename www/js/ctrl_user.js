@@ -511,7 +511,7 @@ app.controller('UserCtrl', function($scope, databaseService, tagService) {
       return this.new_item.type;
     },
     
-    // controls the launchlist edit editor form
+    // controls the launchlist edit editor FORM
     // returns launchlist.show_editor
     showEditor: function() {
       return this.show_editor;

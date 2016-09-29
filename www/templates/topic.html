@@ -18,7 +18,7 @@
 
 	<ion-list class="launchlist">
 
-      <ion-item ng-click="loadLaunchlistList( launchlist )" ng-repeat="launchlist in topic.launchlists_objects" href="#/launchlists/{{launchlist.id}}">
+      <ion-item ng-repeat="launchlist in topic.launchlists_objects" href="#/launchlists/{{launchlist.id}}">
 
         <h3> {{ launchlist.name }} </h3>
         <p> {{ launchlist.description }} </p>
