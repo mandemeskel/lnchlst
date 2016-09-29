@@ -61,9 +61,9 @@
 			".read": true,
 
     	"$topic_id": {
-    		// only topic admins can create/edit topics
-    		// and must be logged in
-    		".write": "root.child('topic_admins/' + auth.uid ).exists() && auth.uid != null"
+    		// only topic admins can create/delete topics
+    		// and logged in users can add to topics
+    		".write": "root.child('topic_admins/' + auth.uid ).exists() || ( newData.exists() && auth.uid != null )"
     	}
     },
 
@@ -80,7 +80,7 @@
 			".read": true,
 
     	"$tag_id": {
-        // TODO: allow admins to delete tags
+        	// TODO: allow admins to delete tags
     		// only allow logged in users to create and update tags
     		// no one can delete tags
     		".write": "newData.exists() && auth.uid != null"
